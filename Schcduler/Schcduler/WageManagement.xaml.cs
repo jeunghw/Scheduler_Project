@@ -72,7 +72,7 @@ namespace Schcduler
 
         private void btnExcel_Click(object sender, RoutedEventArgs e)
         {
-            wageMenger.ExportToExcel(DGSchedule);
+            wageMenger.ExportToExcel(DGSchedule, dt);
 
         }
 

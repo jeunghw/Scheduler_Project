@@ -44,6 +44,7 @@ namespace Schcduler
             MemberData dbmember = loginManager.selectMember();
 
             LoginData.GetLoginData.Wage = dbmember.Wage;
+            LoginData.GetLoginData.UserName = dbmember.Name;
 
             if (dbmember.Phone.Equals(""))
             {
@@ -92,7 +93,10 @@ namespace Schcduler
 
             Button btn = sender as Button;
 
-            wageMenger.updateTime();
+            if(wageMenger.updateTime()==0)
+            {
+                return;
+            }
             wageMenger.WageCalculationt(wageMenger.scheduleDatasLists[0].OnTime, DateTime.Now.ToString("HH:mm"), DateTime.Now.ToString("yyyy-MM-dd"));
         }
 

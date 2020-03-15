@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -51,7 +55,10 @@ namespace Schcduler
 
             foreach (DataRow row in dataTable.Rows)
             {
-                TotalWage += Convert.ToInt32(row["TotalWage"]);
+                if(!row["TotalWage"].ToString().Equals(""))
+                {
+                    TotalWage += Convert.ToInt32(row["TotalWage"]);
+                }
             }
 
 
@@ -75,6 +82,13 @@ namespace Schcduler
         /// <returns></returns>
         public int insertTime()
         {
+            sql = "select Phone from " + DBInfo.TableMember + " where Phone=\"" + LoginData.GetLoginData.LoginPhone + "\"";
+
+            if(selectMember(sql) == 0)
+            {
+                return 0;
+            }
+
             sql = "select * from " + DBInfo.TableSchedule + " where phone = \"" + LoginData.GetLoginData.LoginPhone + "\" and date = \"" + DateTime.Now.ToString("yyyy-MM-dd") + "\"";
 
             scheduleDatasLists = selectSchedule(sql);
@@ -118,6 +132,26 @@ namespace Schcduler
             return result;
         }
 
+        public int selectMember(string sql)
+        {
+            dBConn.DBOpen();
+            rdr = dBConn.DBSelect(sql);
+            string Phone="";
+
+            while (rdr.Read())
+            {
+                Phone = rdr["Phone"].ToString();
+            }
+
+            if(Phone.Equals(""))
+            {
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
+        }
         /// <summary>
         /// 스케줄테이블에서 select해오는 메소드
         /// </summary>
@@ -150,19 +184,19 @@ namespace Schcduler
             return scheduleDatasList;
         }
 
-        public void ExportToExcel(DataGrid dg)
+        public void ExportToExcel(DataGrid dg, DataTable dt)
         {
-            Excel.Application excel;
-            Excel.Workbook workbook;
+            Excel.Application excel = new Excel.Application();
+            Excel.Workbook workbook = excel.Workbooks.Add();
+            Excel.Worksheet worksheet = excel.ActiveSheet;
 
-            /*if(dg.Items.Count==0)
+            if (dg.Items.Count==0)
             {
                 MessageBox.Show("데이터가 없습니다.");
                 return;
             }
 
             int x = dg.Items.Count;
-            Console.WriteLine(dg.Items[0]);
 
             try
             {
@@ -178,19 +212,40 @@ namespace Schcduler
                 cellColumnIndex = 1;
                 cellRowIndex++;
 
-                for (int row = 0; row > dg.Items.Count - 1;row++)
+                for (int row = 0; row < dt.Rows.Count;row++)
                 {
-                    for(int col=0;col<dg.Columns.Count;col++)
+                    for(int col=1;col<dt.Columns.Count;col++)
                     {
-                        //worksheet.Cells[cellRowIndex, cellColumnIndex] = 
+                        worksheet.Cells[cellRowIndex, cellColumnIndex] = dt.Rows[row][col];
+                        cellColumnIndex++;
                     }
+                    cellColumnIndex = 1;
+                    cellRowIndex++;
                 }
 
-            }
-            catch
-            {
+                SaveFileDialog saveFile = new SaveFileDialog();
+                saveFile.CheckPathExists = true;
+                saveFile.AddExtension = true;
+                saveFile.ValidateNames = true;
+                saveFile.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-            }*/
+                saveFile.DefaultExt = ".xlsx";
+                saveFile.Filter = "Microsoft Excel Workbook (*.xls)|*.xlsx";
+                saveFile.FileName = LoginData.GetLoginData.UserName;
+                workbook.SaveAs(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) +"\\"+ saveFile.FileName);
+
+                workbook.Close();
+                excel.Quit();
+                workbook = null;
+                excel = null;
+
+                Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + saveFile.FileName+".xlsx");
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         public void saveDataTable(DataTable dt)
         {
