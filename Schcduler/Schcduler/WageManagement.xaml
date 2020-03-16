@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="WageManagement" Loaded="Page_Loaded">
 
-    <Grid Background="GhostWhite">
+    <Grid Background="Lavender">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -31,7 +31,6 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="Name" Grid.Column="0"/>
                 <Button x:Name="btnExcel" Content="엑셀변환" Click="btnExcel_Click" Grid.Column="1"/>
             </Grid>
         </Grid>

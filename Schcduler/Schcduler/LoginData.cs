@@ -6,21 +6,40 @@ using System.Threading.Tasks;
 
 namespace Schcduler
 {
-    class LoginData
+    public class LoginData
     {
-        private static LoginData loginData = new LoginData();
+        public LoginData()
+        {
+            Phone = "";
+            Password = "";
+            Name = "";
+            Wage = "";
+            Authority = -1;
+        }
 
-        private LoginData() { }
         /// <summary>
         /// 핸드폰번호
         /// </summary>
-        public String LoginPhone { get; set; }
-        public String LoginPassword { get; set; }
+        public string Phone { get; set; }
         /// <summary>
-        /// 사용자이름
+        /// 비밀번호
         /// </summary>
-        public string UserName { get; set; }
+        public string Password { get; set; }
+        /// <summary>
+        /// 이름
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// 시급
+        /// </summary>
         public string Wage { get; set; }
-        public static LoginData GetLoginData { get => loginData; }
+        /// <summary>
+        /// 권한
+        /// 0 : 프로그램 관리자
+        /// 1 : 관리자
+        /// 2 : 매니저
+        /// 3 : 일반직원
+        /// </summary>
+        public int Authority { get; set; }
     }
 }

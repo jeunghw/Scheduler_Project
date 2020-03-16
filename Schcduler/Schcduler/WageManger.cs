@@ -17,523 +17,168 @@ namespace Schcduler
     class WageManger
     {
         DBConn dBConn = MainWindow.GetDBConn();
-        String sql;
-        int result;
-        SQLiteDataReader rdr;
-        public List<ScheduleData> scheduleDatasLists = new List<ScheduleData>();
-        public DataTable MappingData(string sql)
+
+
+        public ScheduleData Select(string phone, string date)
         {
-            //데이터테이블과 데이터 리스트 연결
-            /*DataTable dataTable = new DataTable();
+            SQLiteCommand command;
+            SQLiteDataReader reader;
+            ScheduleData scheduleData = new ScheduleData();
+            string sql = "where Date=\""+date+"\"";
 
-            dataTable.Columns.Add("Date", typeof(string));
-            dataTable.Columns.Add("OnTime", typeof(string));
-            dataTable.Columns.Add("OffTime", typeof(string));
-            dataTable.Columns.Add("Time", typeof(string));
-            dataTable.Columns.Add("RestTime", typeof(string));
-            dataTable.Columns.Add("ExtensionTime", typeof(string));
-            dataTable.Columns.Add("NightTime", typeof(string));
-            dataTable.Columns.Add("TotalTime", typeof(string));
-            dataTable.Columns.Add("Wage", typeof(string));
-            dataTable.Columns.Add("RestWage", typeof(string));
-            dataTable.Columns.Add("ExtensionWage", typeof(string));
-            dataTable.Columns.Add("NightWage", typeof(string));
-            dataTable.Columns.Add("TotalWage", typeof(string));
-
-            foreach (ScheduleData data in list)
-            {
-                dataTable.Rows.Add(data);
-            }*/
-
-            DataTable dataTable = new DataTable();
-            DataSet ds = new DataSet();
             dBConn.DBOpen();
-            dBConn.DBSelect2(sql).Fill(ds);
-            dataTable = ds.Tables[0];
 
-            int TotalWage = 0;
+            command = dBConn.Select(phone, sql);
+            reader = command.ExecuteReader();
 
-            foreach (DataRow row in dataTable.Rows)
+            while (reader.Read())
             {
-                if(!row["TotalWage"].ToString().Equals(""))
-                {
-                    TotalWage += Convert.ToInt32(row["TotalWage"]);
-                }
+                scheduleData.Date = reader["Date"].ToString();
+                scheduleData.OnTime = reader["OnTime"].ToString();
+                scheduleData.OffTime = reader["OffTime"].ToString();
+                scheduleData.Time = reader["Time"].ToString();
+                scheduleData.RestTime = reader["RestTime"].ToString();
+                scheduleData.ExtensionTime = reader["ExtensionTime"].ToString();
+                scheduleData.NightTime = reader["NightTime"].ToString();
+                scheduleData.TotalTime = reader["TotalTime"].ToString();
+                scheduleData.Wage = reader["Wage"].ToString();
+                scheduleData.RestWage = reader["RestWage"].ToString();
+                scheduleData.ExtensionWage = reader["ExtensionWage"].ToString();
+                scheduleData.NightWage = reader["NightWage"].ToString();
+                scheduleData.TotalWage = reader["TotalWage"].ToString();
             }
 
+            dBConn.DBClose();
 
-            DataRow datarow = dataTable.NewRow();
-            datarow["NightWage"] = "합계";
-            datarow["TotalWage"] = TotalWage;
-
-            dataTable.Rows.Add(datarow);
-
-            return dataTable;
+            return scheduleData;
         }
 
-        /// <summary>
-        /// insert쿼리를 전송
-        /// </summary>
-        /// <param name="number">
-        /// int형식으로 전송테이블을 선택
-        /// 1 : Membertable
-        /// 2 : Schedultable
-        /// </param>
-        /// <returns></returns>
-        public int insertTime()
+        public int Update(string phone, ScheduleData scheduleData)
         {
-            sql = "select Phone from " + DBInfo.TableMember + " where Phone=\"" + LoginData.GetLoginData.LoginPhone + "\"";
+            int result = -1;
+            string sql = "Time = \"" + scheduleData.Time + "\", RestTime = \"" + scheduleData.RestTime + "\", ExtensionTime = \"" + scheduleData.ExtensionTime + "\", " +
+               "NightTime = \"" + scheduleData.NightTime + "\", TotalTime = \"" + scheduleData.TotalTime + "\", Wage = \"" + scheduleData.Wage + "\", RestWage = \"" + scheduleData.RestWage + 
+               "\", " +"ExtensionWage = \"" + scheduleData.ExtensionWage + "\", NightWage = \"" + scheduleData.NightWage + "\", TotalWage = \"" + scheduleData.TotalWage + "\"" +
+               " where Date = \"" + scheduleData.Date + "\"";
 
-            if(selectMember(sql) == 0)
-            {
-                return 0;
-            }
-
-            sql = "select * from " + DBInfo.TableSchedule + " where phone = \"" + LoginData.GetLoginData.LoginPhone + "\" and date = \"" + DateTime.Now.ToString("yyyy-MM-dd") + "\"";
-
-            scheduleDatasLists = selectSchedule(sql);
-
-            if (scheduleDatasLists.Count != 0)
-            {
-                return 0;
-            }
-            else
-            {
-                sql = "insert into " + DBInfo.TableSchedule + " (Phone, Date, OnTime)  values(\"" + LoginData.GetLoginData.LoginPhone
-                    + "\", date(\'now\',\'localtime\'), \"" + DateTime.Now.ToString("HH:mm") + "\")";
-            }
             dBConn.DBOpen();
-            result = dBConn.DBManipulation(sql);
+            dBConn.Update(phone, sql);
             dBConn.DBClose();
 
             return result;
         }
-
-        public int updateTime()
-        {
-            sql = "select * from " + DBInfo.TableSchedule + " where phone = \"" + LoginData.GetLoginData.LoginPhone + "\" and date = \"" + DateTime.Now.ToString("yyyy-MM-dd") + "\"";
-
-            scheduleDatasLists = selectSchedule(sql);
-
-            if (scheduleDatasLists.Count == 0)
-            {
-                return 0;
-            }
-            else
-            {
-                sql = " update " + DBInfo.TableSchedule + " set OffTime = \"" + DateTime.Now.ToString("HH:mm") + "\" where Phone = \""
-                    + LoginData.GetLoginData.LoginPhone + "\" and Date = \"" + DateTime.Now.ToString("yyyy-MM-dd") + "\"";
-            }
-
-            dBConn.DBOpen();
-            result = dBConn.DBManipulation(sql);
-            dBConn.DBClose();
-
-            return result;
-        }
-
-        public int selectMember(string sql)
-        {
-            dBConn.DBOpen();
-            rdr = dBConn.DBSelect(sql);
-            string Phone="";
-
-            while (rdr.Read())
-            {
-                Phone = rdr["Phone"].ToString();
-            }
-
-            if(Phone.Equals(""))
-            {
-                return 0;
-            }
-            else
-            {
-                return 1;
-            }
-        }
         /// <summary>
-        /// 스케줄테이블에서 select해오는 메소드
+        /// 출근
         /// </summary>
         /// <returns></returns>
-        public List<ScheduleData> selectSchedule(string sql)
+        public int OnWork(LoginData loginData)
         {
-            dBConn.DBOpen();
-            rdr = dBConn.DBSelect(sql);
+            int result = -1;
+            string sql = "(Date, OnTime) values(\"" + DateTime.Now.ToString("yyyy-MM-dd") + "\",\"" + DateTime.Now.ToString("HH:mm") + "\")";
 
-            ScheduleData scheduleData;
-            List<ScheduleData> scheduleDatasList = new List<ScheduleData>();
-
-            while (rdr.Read())
-            {
-                scheduleData = new ScheduleData();
-
-                scheduleData.Phone = rdr["phone"].ToString();
-                scheduleData.Date = rdr["date"].ToString();
-                scheduleData.OnTime = rdr["ontime"].ToString();
-                scheduleData.OffTime = rdr["offtime"].ToString();
-
-                if (!scheduleData.Phone.Equals(""))
-                {
-                    scheduleDatasList.Add(scheduleData);
-                }
-            }
-
-            dBConn.DBClose();
-
-            return scheduleDatasList;
-        }
-
-        public void ExportToExcel(DataGrid dg, DataTable dt)
-        {
-            Excel.Application excel = new Excel.Application();
-            Excel.Workbook workbook = excel.Workbooks.Add();
-            Excel.Worksheet worksheet = excel.ActiveSheet;
-
-            if (dg.Items.Count==0)
-            {
-                MessageBox.Show("데이터가 없습니다.");
-                return;
-            }
-
-            int x = dg.Items.Count;
-
-            try
-            {
-                int cellRowIndex = 1;
-                int cellColumnIndex = 1;
-
-                for(int col=0;col<dg.Columns.Count;col++)
-                {
-                    worksheet.Cells[cellRowIndex, cellColumnIndex] = dg.Columns[col].Header;
-                    cellColumnIndex++;
-                }
-
-                cellColumnIndex = 1;
-                cellRowIndex++;
-
-                for (int row = 0; row < dt.Rows.Count;row++)
-                {
-                    for(int col=1;col<dt.Columns.Count;col++)
-                    {
-                        worksheet.Cells[cellRowIndex, cellColumnIndex] = dt.Rows[row][col];
-                        cellColumnIndex++;
-                    }
-                    cellColumnIndex = 1;
-                    cellRowIndex++;
-                }
-
-                SaveFileDialog saveFile = new SaveFileDialog();
-                saveFile.CheckPathExists = true;
-                saveFile.AddExtension = true;
-                saveFile.ValidateNames = true;
-                saveFile.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-                saveFile.DefaultExt = ".xlsx";
-                saveFile.Filter = "Microsoft Excel Workbook (*.xls)|*.xlsx";
-                saveFile.FileName = LoginData.GetLoginData.UserName;
-                workbook.SaveAs(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) +"\\"+ saveFile.FileName);
-
-                workbook.Close();
-                excel.Quit();
-                workbook = null;
-                excel = null;
-
-                Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + saveFile.FileName+".xlsx");
-
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-        public void saveDataTable(DataTable dt)
-        {
-            DataTable dtChanges = dt.GetChanges(DataRowState.Modified);
-
-            if (dtChanges != null)
+            if (!CheckDate(loginData))
             {
                 dBConn.DBOpen();
-                foreach (DataRow dr in dtChanges.Rows)
-                {
-
-                    if ((!dr["OnTime"].ToString().Contains(":") && dr["OnTime"].ToString().Length != 4) || (!dr["OffTime"].ToString().Contains(":") && dr["OffTime"].ToString().Length != 4)
-                        || (dr["OnTime"].ToString().Contains(":") && dr["OnTime"].ToString().Length > 5) || (dr["OffTime"].ToString().Contains(":") && dr["OffTime"].ToString().Length > 5))
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        string[] swap = splitString(dr["OnTime"].ToString());
-                        int Time, Minute;
-                        Time = Convert.ToInt32(swap[0]);
-                        Minute = Convert.ToInt32(swap[1]);
-
-                        if (Time < 0 || Time > 27 || Minute > 60 || Minute < 0)
-                        {
-                            return;
-                        }
-
-                        swap = splitString(dr["OffTime"].ToString());
-                        Time = Convert.ToInt32(swap[0]);
-                        Minute = Convert.ToInt32(swap[1]);
-
-                        if (Time < 0 || Time > 27 || Minute > 60 || Minute < 0)
-                        {
-                            return;
-                        }
-                    }
-
-                    sql = "update " + DBInfo.TableSchedule + " set OnTime = \"" + dr["OnTime"] + "\", OffTime = \"" + dr["OffTime"] + "\" where Phone = \"" + dr["Phone"] + "\" and Date = \"" + dr["Date"] + "\"";
-                    dBConn.DBManipulation(sql);
-                    WageCalculationt(dr["Ontime"].ToString(), dr["OffTime"].ToString(), dr["Date"].ToString());
-
-                }
+                dBConn.Insert(loginData.Phone, sql);
                 dBConn.DBClose();
             }
 
+            return result;
         }
 
-        //List로 데이터 보여줄때 사용(사용 X)
-        /*private List<ScheduleData> WageCalculationt(List<ScheduleData> list)
+        /// <summary>
+        /// 퇴근
+        /// </summary>
+        /// <returns></returns>
+        public int OffWork(LoginData loginData)
         {
-            foreach (ScheduleData data in list)
+            int result = -1;
+            string sql = "OffTime =\"" + DateTime.Now.ToString("HH:mm") + "\" where Date=\"" + DateTime.Now.ToString("yyyy-MM-dd") + "\"";
+
+            if (CheckDate(loginData))
             {
-                //출근,퇴근 시간, 분 분리
-                int OnTime, OnMinute, OffTime, OffMinute;
-
-                string[] swap = data.OnTime.Split(":");
-
-                OnTime = Convert.ToInt32(swap[0]);
-                OnMinute = Convert.ToInt32(swap[1]);
-
-                swap = data.OffTime.Split(":");
-
-                OffTime = Convert.ToInt32(swap[0]);
-                OffMinute = Convert.ToInt32(swap[1]);
-
-                //시간들 계산
-                int Time, Minute;
-
-                //24시 이후 퇴근은 24를 더해서 계산
-                if (OffTime < 5)
-                    OffTime += 24;
-
-                //오전 6시 이후 출근
-                if (OnTime >= 6)
-                {
-                    //일반시간
-                    if(OffTime < 22)
-                    {
-                        Time = OffTime - OnTime;
-                        if (OnMinute <= OffMinute)
-                        {
-                            Minute = OffMinute - OnMinute;
-                        }
-                        else
-                        {
-                            Time -= 1;
-                            Minute = (OffMinute + 60) - OnMinute;
-                        }
-                        data.Time = Time + ":" + Minute;
-                    }
-                    //야간시간
-                    else
-                    {
-                        Time = 22 - OnTime;
-                        Time -= 1;
-                        Minute = 60 - OnMinute;
-
-                        if(Minute >= 60)
-                        {
-                            Time += 1;
-                            Minute -= 60;
-                        }
-
-                        data.Time = Time + ":" + Minute;
-
-                        Time = OffTime - 22;
-                        Minute = OffMinute;
-                        data.NightTime = Time + ":" + Minute;
-                    }
-                }
-                //오전 6시 이전 출근
-                else
-                {
-                    //일반시간
-                    if (OffTime < 22)
-                    {
-                        Time = OffTime - 6;
-                        Minute = OffMinute;
-                        data.Time = Time + ":" + Minute;
-                    }
-                    //야간시간
-                    else
-                    {
-                        Time = (6 - OnTime) + (OffTime - 22);
-                        if (OnMinute <= OffMinute)
-                        {
-                            Minute = OffMinute - OnMinute;
-                        }
-                        else
-                        {
-                            Time -= 1;
-                            Minute = (OffMinute + 60) - OnMinute;
-                        }
-                        data.NightTime = Time + ":" + Minute;
-                    }
-                }
-
-                //총 시간
-                if (!data.Time.Equals(""))
-                {
-                    swap = data.Time.Split(":");
-                    Time = Convert.ToInt32(swap[0]);
-                    Minute = Convert.ToInt32(swap[1]);
-                }
-
-                if (!data.NightTime.Equals(""))
-                {
-                    swap = data.NightTime.Split(":");
-                    Time += Convert.ToInt32(swap[0]);
-                    Minute += Convert.ToInt32(swap[1]);
-                }
-
-                if(Minute >= 60)
-                {
-                    Time += 1;
-                    Minute -= 60;
-                }
-                data.TotalTime = Time + ":" + Minute;
-
-                //휴계시간
-                if((Time / 4)>0)
-                {
-                    Minute = (Time / 4) * 30;
-                    Time = 0;
-                    if(Minute >= 60)
-                    {
-                        Time += 1;
-                        Minute -= 60;
-                    }
-                    data.RestTime = Time + ":" + Minute;
-                }
-
-                //연장시간
-                swap = data.TotalTime.Split(":");
-                Time = Convert.ToInt32(swap[0]);
-                Minute = Convert.ToInt32(swap[1]);
-                if(Time > 8)
-                {
-                    Time -=8;
-                    data.ExtensionTime = Time + ":" + Minute;
-
-                    //일반시간에서 연장시간 빼기
-                    int Time1, Minute1;
-                    swap = data.Time.Split(":");
-                    Time = Convert.ToInt32(swap[0]);
-                    Minute = Convert.ToInt32(swap[1]);
-
-                    swap = data.ExtensionTime.Split(":");
-                    Time1 = Convert.ToInt32(swap[0]);
-                    Minute1 = Convert.ToInt32(swap[1]);
-
-                    Time -= Time1;
-
-                    if(Minute < Minute1)
-                    {
-                        Time -= 1;
-                        Minute += 60;
-                    }
-
-                    Minute -= Minute1;
-
-                    data.Time = Time + ":" + Minute;
-                }
-
-                //일반시급
-                if (!data.Time.Equals(""))
-                {
-                    swap = data.Time.Split(":");
-                    Time = Convert.ToInt32(swap[0]);
-                    Minute = Convert.ToInt32(swap[1]);
-
-                    data.Wage = ((Convert.ToInt32(LoginData.GetLoginData.Wage) * Time) + (Convert.ToInt32(LoginData.GetLoginData.Wage) * Minute) / 60).ToString();
-                }
-                else
-                {
-                    data.Wage = "0";
-                }
-
-                //휴계시급
-                if (!data.RestTime.Equals(""))
-                {
-                    swap = data.RestTime.Split(":");
-                    Time = Convert.ToInt32(swap[0]);
-                    Minute = Convert.ToInt32(swap[1]);
-
-                    data.RestWage = ((Convert.ToInt32(LoginData.GetLoginData.Wage) * Time) + (Convert.ToInt32(LoginData.GetLoginData.Wage) * Minute) / 60).ToString();
-                }
-                else
-                {
-                    data.RestWage = "0";
-                }
-
-                //연장시급
-                if (!data.ExtensionTime.Equals(""))
-                {
-                    swap = data.ExtensionTime.Split(":");
-                    Time = Convert.ToInt32(swap[0]);
-                    Minute = Convert.ToInt32(swap[1]);
-
-                    data.ExtensionWage = string.Format("{0:F0}", ((Convert.ToInt32(LoginData.GetLoginData.Wage) * Time) + (Convert.ToInt32(LoginData.GetLoginData.Wage) * Minute) / 60) * 1.5);
-                }
-                else
-                {
-                    data.ExtensionWage = "0";
-                }
-                //야간시급
-                if (!data.NightTime.Equals(""))
-                {
-                    swap = data.NightTime.Split(":");
-                    Time = Convert.ToInt32(swap[0]);
-                    Minute = Convert.ToInt32(swap[1]);
-
-                    data.NightWage = string.Format("{0:F0}", ((Convert.ToInt32(LoginData.GetLoginData.Wage) * Time) + (Convert.ToInt32(LoginData.GetLoginData.Wage) * Minute) / 60) * 1.5);
-                }
-                else
-                {
-                    data.NightWage = "0";
-                }
-
-                //총 시급
-                data.TotalWage = (Convert.ToInt32(data.Wage) + Convert.ToInt32(data.ExtensionWage) + Convert.ToInt32(data.NightWage) - Convert.ToInt32(data.RestWage)).ToString();
+                dBConn.DBOpen();
+                dBConn.Update(loginData.Phone, sql);
+                dBConn.DBClose();
             }
 
-            return list;
-        }*/
+            return result;
+        }
 
-        public void WageCalculationt(string InputOnTime, string InputOffTime, string InputDate)
+        /// <summary>
+        /// 사용자가 출근을 했는지 확인
+        /// </summary>
+        /// <param name="loginData">사용자 정보</param>
+        /// <returns>
+        /// 출근여부
+        /// true : 출근완료
+        /// false : 출근안함
+        /// </returns>
+        private bool CheckDate(LoginData loginData)
         {
-            sql = "select Wage from " + DBInfo.TableMember + " where phone=\"" + LoginData.GetLoginData.LoginPhone + "\"";
+            SQLiteCommand command;
+            SQLiteDataReader reader;
+            bool result = false;
+            string sql = " where Date=\""+DateTime.Now.ToString("yyyy-MM-dd")+"\"";
+            
             dBConn.DBOpen();
-            rdr = dBConn.DBSelect(sql);
+            command = dBConn.Select(loginData.Phone, sql);
 
-            rdr.Read();
-            LoginData.GetLoginData.Wage = rdr["wage"].ToString();
+            try
+            {
+                reader = command.ExecuteReader();
+                reader.Read();
+                if (reader["Date"].ToString().Equals(""))
+                {
+                    result = false;
+                }
+                else
+                {
+                    result = true;
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("날짜체크실패 : " + ex.Message);
+            }
+            dBConn.DBClose();
+            
+            return result;
+        }
+
+        private int SelectWage(string phone)
+        {
+            SQLiteCommand command;
+            SQLiteDataReader reader;
+            string sql = "where Phone=\"" + phone + "\"";
+            int result = 0;
+
+            dBConn.DBOpen();
+
+            command = dBConn.Select(DataBaseData.TableMember, sql);
+            reader = command.ExecuteReader();
+
+            result = Convert.ToInt32(reader["Wage"]);
 
             dBConn.DBClose();
 
-            ScheduleData scheduleData = new ScheduleData();
+            return result;
+        }
+
+        public void WageCalculation(string phone, string date)
+        {
+            ScheduleData scheduleData = Select(phone, date);
+            int Wage = SelectWage(phone);
+
             //출근,퇴근 시간, 분 분리
             int OnTime, OnMinute, OffTime, OffMinute;
 
-            string[] swap = splitString(InputOnTime);
+            string[] swap = splitString(scheduleData.OnTime);
 
             OnTime = Convert.ToInt32(swap[0]);
             OnMinute = Convert.ToInt32(swap[1]);
 
-            swap = splitString(InputOffTime);
+            swap = splitString(scheduleData.OffTime);
 
             OffTime = Convert.ToInt32(swap[0]);
             OffMinute = Convert.ToInt32(swap[1]);
@@ -566,16 +211,25 @@ namespace Schcduler
                 //야간시간
                 else
                 {
-                    Time = 22 - OnTime;
-                    Time -= 1;
-                    Minute = 60 - OnMinute;
-
-                    if (Minute >= 60)
+                    if (OnTime >= 22)
                     {
-                        Time += 1;
-                        Minute -= 60;
-                    }
+                        Time = 0;
+                        Minute = 0;
 
+                        OffMinute -= OnMinute;
+                    }
+                    else
+                    {
+                        Time = 22 - OnTime;
+                        Time -= 1;
+                        Minute = 60 - OnMinute;
+
+                        if (Minute >= 60)
+                        {
+                            Time += 1;
+                            Minute -= 60;
+                        }
+                    }
                     scheduleData.Time = Time + ":" + Minute;
 
                     Time = OffTime - 22;
@@ -684,7 +338,7 @@ namespace Schcduler
                 Time = Convert.ToInt32(swap[0]);
                 Minute = Convert.ToInt32(swap[1]);
 
-                scheduleData.Wage = ((Convert.ToInt32(LoginData.GetLoginData.Wage) * Time) + (Convert.ToInt32(LoginData.GetLoginData.Wage) * Minute) / 60).ToString();
+                scheduleData.Wage = ((Wage * Time) + (Wage * Minute) / 60).ToString();
             }
             else
             {
@@ -698,7 +352,7 @@ namespace Schcduler
                 Time = Convert.ToInt32(swap[0]);
                 Minute = Convert.ToInt32(swap[1]);
 
-                scheduleData.RestWage = ((Convert.ToInt32(LoginData.GetLoginData.Wage) * Time) + (Convert.ToInt32(LoginData.GetLoginData.Wage) * Minute) / 60).ToString();
+                scheduleData.RestWage = ((Wage * Time) + (Wage * Minute) / 60).ToString();
             }
             else
             {
@@ -712,7 +366,7 @@ namespace Schcduler
                 Time = Convert.ToInt32(swap[0]);
                 Minute = Convert.ToInt32(swap[1]);
 
-                scheduleData.ExtensionWage = string.Format("{0:F0}", ((Convert.ToInt32(LoginData.GetLoginData.Wage) * Time) + (Convert.ToInt32(LoginData.GetLoginData.Wage) * Minute) / 60) * 1.5);
+                scheduleData.ExtensionWage = string.Format("{0:F0}", ((Wage * Time) + (Wage * Minute) / 60) * 1.5);
             }
             else
             {
@@ -725,7 +379,7 @@ namespace Schcduler
                 Time = Convert.ToInt32(swap[0]);
                 Minute = Convert.ToInt32(swap[1]);
 
-                scheduleData.NightWage = string.Format("{0:F0}", ((Convert.ToInt32(LoginData.GetLoginData.Wage) * Time) + (Convert.ToInt32(LoginData.GetLoginData.Wage) * Minute) / 60) * 1.5);
+                scheduleData.NightWage = string.Format("{0:F0}", ((Wage * Time) + (Wage * Minute) / 60) * 1.5);
             }
             else
             {
@@ -736,14 +390,7 @@ namespace Schcduler
             scheduleData.TotalWage = (Convert.ToInt32(scheduleData.Wage) + Convert.ToInt32(scheduleData.ExtensionWage)
                 + Convert.ToInt32(scheduleData.NightWage) - Convert.ToInt32(scheduleData.RestWage)).ToString();
 
-            sql = "update " + DBInfo.TableSchedule + " set Time = \"" + scheduleData.Time + "\", RestTime = \"" + scheduleData.RestTime + "\", ExtensionTime = \"" + scheduleData.ExtensionTime + "\", " +
-                "NightTime = \"" + scheduleData.NightTime + "\", TotalTime = \"" + scheduleData.TotalTime + "\", Wage = \"" + scheduleData.Wage + "\", RestWage = \"" + scheduleData.RestWage + "\", " +
-                "ExtensionWage = \"" + scheduleData.ExtensionWage + "\", NightWage = \"" + scheduleData.NightWage + "\", TotalWage = \"" + scheduleData.TotalWage + "\"" +
-                " where Phone = \"" + LoginData.GetLoginData.LoginPhone + "\" and Date = \"" + InputDate + "\"";
-
-            dBConn.DBOpen();
-            dBConn.DBManipulation(sql);
-            dBConn.DBClose();
+            Update(phone, scheduleData);
         }
 
         private string[] splitString(string str)
@@ -764,6 +411,206 @@ namespace Schcduler
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 데이터 그리드, 데이터 테이블 맵핑
+        /// </summary>
+        /// <param name="yaer">선택년도</param>
+        /// <param name="month">선택월</param>
+        /// <returns></returns>
+        public DataTable MappingDataTable(string yaer, string month)
+        {
+            SQLiteCommand command;
+            SQLiteDataAdapter adapter;
+            DataTable dataTable = new DataTable();
+            DataSet dataSet = new DataSet();
+            string sql = "where Date LIKE \"" + yaer + "-" + month.PadLeft(2,'0') + "-" + "%\"";
+            string phone ="";
+
+            if(MemberData.GetMemberData.AuthorityData.Authority==3)
+            {
+                phone = MemberData.GetMemberData.Phone;
+            }
+            else
+            {
+                int index = TransitionPage.pgMain.cbName.SelectedIndex;
+                phone = TransitionPage.pgMain.loginDataList[index].Phone;
+                
+            }
+
+            dBConn.DBOpen();
+
+            command = dBConn.Select(phone, sql);
+            adapter = new SQLiteDataAdapter(command);
+            adapter.Fill(dataSet);
+            dataTable = dataSet.Tables[0];
+
+            int TotalWage = 0;
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                if(!row["TotalWage"].ToString().Equals(""))
+                {
+                    TotalWage += Convert.ToInt32(row["TotalWage"]);
+                }
+            }
+
+            DataRow datarow = dataTable.NewRow();
+            datarow["NightWage"] = "합계";
+            datarow["TotalWage"] = TotalWage;
+
+            dataTable.Rows.Add(datarow);
+
+            dBConn.DBClose();
+
+            return dataTable;
+        }
+
+        /// <summary>
+        /// 데이터 테이블의 변경사항만 DB에 저장
+        /// </summary>
+        /// <param name="dataTable"></param>
+        public void SaveDataTable(DataTable dataTable)
+        {
+            DataTable dtChanges = dataTable.GetChanges(DataRowState.Modified);
+
+            if (dtChanges != null)
+            {
+                dBConn.DBOpen();
+                foreach (DataRow data in dtChanges.Rows)
+                {
+                    if ((!data["OnTime"].ToString().Contains(":") && data["OnTime"].ToString().Length != 4) || (!data["OffTime"].ToString().Contains(":") && data["OffTime"].ToString().Length != 4)
+                        || (data["OnTime"].ToString().Contains(":") && data["OnTime"].ToString().Length > 5) || (data["OffTime"].ToString().Contains(":") && data["OffTime"].ToString().Length > 5))
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        string[] swap = splitString(data["OnTime"].ToString());
+                        int Time, Minute;
+                        Time = Convert.ToInt32(swap[0]);
+                        Minute = Convert.ToInt32(swap[1]);
+
+                        if (Time < 0 || Time > 27 || Minute > 60 || Minute < 0)
+                        {
+                            return;
+                        }
+
+                        swap = splitString(data["OffTime"].ToString());
+                        Time = Convert.ToInt32(swap[0]);
+                        Minute = Convert.ToInt32(swap[1]);
+
+                        if (Time < 0 || Time > 27 || Minute > 60 || Minute < 0)
+                        {
+                            return;
+                        }
+                    }
+
+                    string phone = "";
+
+                    if (MemberData.GetMemberData.AuthorityData.Authority == 3)
+                    {
+                        phone = MemberData.GetMemberData.Phone;
+                    }
+                    else
+                    {
+                        int index = TransitionPage.pgMain.cbName.SelectedIndex;
+                        phone = TransitionPage.pgMain.loginDataList[index].Phone;
+                    }
+
+                    string sql = "OnTime = \"" + data["OnTime"] + "\", OffTime = \"" + data["OffTime"] + "\" where Date = \"" + data["Date"] + "\"";
+                    dBConn.Update(phone, sql);
+                    WageCalculation(phone, data["Date"].ToString());
+                }
+                dBConn.DBClose();
+            }
+
+        }
+
+        public void ExportToExcel(DataGrid dataGrid, DataTable dataTable)
+        {
+            Excel.Application excel = new Excel.Application();
+            Excel.Workbook workbook = excel.Workbooks.Add();
+            Excel.Worksheet worksheet = excel.ActiveSheet;
+
+            if (dataGrid.Items.Count == 0)
+            {
+                MessageBox.Show("데이터가 없습니다.");
+                return;
+            }
+
+            int x = dataGrid.Items.Count;
+
+            try
+            {
+                int cellRowIndex = 1;
+                int cellColumnIndex = 1;
+
+                for (int col = 0; col < dataGrid.Columns.Count; col++)
+                {
+                    worksheet.Cells[cellRowIndex, cellColumnIndex] = dataGrid.Columns[col].Header;
+                    cellColumnIndex++;
+                }
+
+                cellColumnIndex = 1;
+                cellRowIndex++;
+
+                for (int row = 0; row < dataTable.Rows.Count; row++)
+                {
+                    for (int col = 0; col < dataTable.Columns.Count; col++)
+                    {
+                        worksheet.Cells[cellRowIndex, cellColumnIndex] = dataTable.Rows[row][col];
+                        cellColumnIndex++;
+                    }
+                    cellColumnIndex = 1;
+                    cellRowIndex++;
+                }
+
+                SaveFileDialog saveFile = new SaveFileDialog();
+                saveFile.CheckPathExists = true;
+                saveFile.AddExtension = true;
+                saveFile.ValidateNames = true;
+                saveFile.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+                saveFile.DefaultExt = ".xlsx";
+                saveFile.Filter = "Microsoft Excel Workbook (*.xls)|*.xlsx";
+
+                string Name = "";
+
+                if(MemberData.GetMemberData.AuthorityData.Authority==3)
+                {
+                    Name = MemberData.GetMemberData.Name;
+                }
+                else
+                {
+                    Name = TransitionPage.pgMain.cbName.Text;
+                }
+                saveFile.FileName = Name;
+                workbook.SaveAs(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + saveFile.FileName);
+
+                workbook.Close();
+                excel.Quit();
+
+                releaseObject(worksheet);
+                releaseObject(workbook);
+                releaseObject(excel);
+
+                Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + saveFile.FileName + ".xlsx");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 오브젝트 해제
+        /// </summary>
+        /// <param name="obj"></param>
+        private void releaseObject(object obj)
+        {
+            System.Runtime.InteropServices.Marshal.FinalReleaseComObject(obj);
         }
     }
 }

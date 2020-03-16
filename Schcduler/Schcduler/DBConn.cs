@@ -1,140 +1,291 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Schcduler
 {
     public class DBConn
     {
-        private string Paht = Directory.GetCurrentDirectory() + "\\..\\..\\..\\DB";                   //데이터베이스 위치
+        private string Path = Directory.GetCurrentDirectory() + "\\..\\..\\..\\DB";                   //데이터베이스 위치
         protected SQLiteConnection conn = null;                                                     //SQL커낵션을 위한 객체
-        string sql;
         SQLiteCommand command;
-        int result;
-        SQLiteDataReader rdr;
 
         public DBConn()
         {
-            try
-            {
-                if (!Directory.Exists(Paht))
-                {
-                    DBCreate();
-                }
-
-                DBOpen();
-                TableCreate();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("데이터베이스 연결실패", e.Message);
-            }
-            DBClose();
+            DBDirectoryCreate();
+            DBInit();
         }
-
-        private void TableCreate()
-        {
-            if (CheckTable(DBInfo.TableMember).Equals(""))
-            {
-                //회원테이블 생성
-                sql = "create table " + DBInfo.TableMember +
-                    " ( Phone char(11) primary key, Password varchar(8), Name varchr(8), Wage varchar(8))";
-                TableCreate(sql);
-            }
-            if (CheckTable(DBInfo.TableSchedule).Equals(""))
-            {
-                //스케줄테이블 생성
-                sql = "create table " + DBInfo.TableSchedule +
-                    " ( Phone char(11), Date char(10), OnTime char(5), OffTime char(5), Time char(5), RestTime char(5), ExtensionTime char(5), NightTime char(5), TotalTime char(5)," +
-                    "Wage varchar(6), RestWage varchar(6), ExtensionWage varchar(6), NightWage varchar(6), TotalWage varchar(6), primary key(\"phone\",\"date\"))";
-                TableCreate(sql);
-            }
-            /*if(CheckTable(DBInfo.TableSetting).Equals(""))
-            {
-                //셋팅테이블 생성
-                sql = "create table " + DBInfo.TableSetting +
-                    " ( number char(1) primary key, wage varchar(8))";
-                TableCreate(sql);
-            }*/
-
-            //관리자계정 생성
-            sql = "insert into member (Phone, Password, name, Wage) values(\"00000000000\",\"0000\",\"관리자\",\"8590\")";
-
-            result = DBManipulation(sql);
-
-            if (result == 0)
-            {
-                Console.WriteLine("관리자계정 생성실패");
-            }
-        }
-
-        private String CheckTable(String tableName)
-        {
-            sql = "select name from sqlite_master where name=\"" + tableName + "\"";
-            rdr = DBSelect(sql);
-
-            rdr.Read();
-
-            return rdr["name"].ToString();
-        }
-
+        /// <summary>
+        /// 데이터베이스 열기
+        /// </summary>
         public void DBOpen()
         {
-            conn = new SQLiteConnection("Data Source=" + Paht + "\\" + DBInfo.DbScheduler);
-            conn.Open();
+            try
+            {
+                conn = new SQLiteConnection("Data Source=" + Path + "\\" + DataBaseData.DbScheduler);
+                conn.Open();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("데이터베이스 열기 실패 : " + ex.Message);
+            }
         }
-
+        /// <summary>
+        /// 데이터베이스 닫기
+        /// </summary>
         public void DBClose()
         {
-            conn.Close();
+            try
+            {
+                conn.Close();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("데이터베이스 닫기 실패 : " + ex.Message);
+            }
         }
-
-        public SQLiteDataReader DBSelect(string sql)
+        /// <summary>
+        /// 데이터베이스 저장경로 생성
+        /// </summary>
+        private void DBDirectoryCreate()
         {
-            command = new SQLiteCommand(sql, conn);
-            rdr = command.ExecuteReader();
-
-            return rdr;
+            try
+            {
+                if (!Directory.Exists(Path))
+                {
+                    Directory.CreateDirectory(Path);
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("데이터베이스 저장경로 생성 실패 : " + ex.Message);
+            }
         }
-
-        public SQLiteDataAdapter DBSelect2(string sql)
+        /// <summary>
+        /// 데이터베이스 초기화
+        /// </summary>
+        private void DBInit()
         {
-            return new SQLiteDataAdapter(new SQLiteCommand(sql, conn));
-        }
-
-        public int DBSelect_Count(string sql)
-        {
-            command = new SQLiteCommand(sql, conn);
-            return Convert.ToInt32(command.ExecuteScalar());
+            CreateTable();
         }
 
         /// <summary>
-        /// DML전송시 사용
+        /// 기본테이븰 생성
         /// </summary>
-        /// <param name="sql"></param>
-        /// <returns></returns>
-        public int DBManipulation(string sql)
+        private void CreateTable()
         {
-            command = new SQLiteCommand(sql, conn);
-            result = command.ExecuteNonQuery();
+            string sql = "";
+
+            DBOpen();
+
+            if (!CheckTable(DataBaseData.TableMember))
+            {
+                sql = "(Phone char(11), Password varchar(8), Name varchar(8), Wage varchar(8), Authority int(2), primary Key(\"Phone\"))";
+                Create(DataBaseData.TableMember, sql);
+                MemberDataInsert();
+            }
+
+            if (!CheckTable(DataBaseData.TableAuthority))
+            { 
+                sql = "(Authority char(2), SignUp char(1), Modify char(1), Search char(1), primary Key(\"Authority\"))";
+                Create(DataBaseData.TableAuthority, sql);
+                AuthorityInsert();
+            }
+
+            DBClose();
+        }
+
+        /// <summary>
+        /// 멤버 테이블 기본값 입력
+        /// </summary>
+        private void MemberDataInsert()
+        {
+            string sql ="values(\"00000000000\",\"0000\",\"관리자\",\"8590\",0)";
+            Insert(DataBaseData.TableMember, sql);
+        }
+
+        /// <summary>
+        /// 권한테이블 기본값 입력
+        /// </summary>
+        private void AuthorityInsert()
+        {
+            string sql = "";
+
+            sql = "values(0,0,1,1)";
+            Insert(DataBaseData.TableAuthority, sql);
+
+            sql = "values(1,0,0,0)";
+            Insert(DataBaseData.TableAuthority, sql);
+
+            sql = "values(2,0,0,0)";
+            Insert(DataBaseData.TableAuthority, sql);
+
+            sql = "values(3,1,0,1)";
+            Insert(DataBaseData.TableAuthority, sql);
+        }
+        /// <summary>
+        /// 테이블이 있는지 확인
+        /// </summary>
+        /// <param name="tableName">확인할 테이블 이름</param>
+        /// <returns>
+        /// true : 있음
+        /// false : 없음
+        /// </returns>
+        public bool CheckTable(string tableName)
+        {
+            SQLiteDataReader reader;
+            bool result = false;
+            string sql = "Select name from sqlite_master where name=\"" + tableName + "\"";
+
+            try
+            {
+                command = new SQLiteCommand(sql, conn);
+                reader = command.ExecuteReader();
+                reader.Read();
+                if (reader["name"].ToString().Equals(""))
+                {
+                    result = false;
+                }
+                else
+                {
+                    result = true;
+                }
+                reader.Close();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("데이터베이스 테이블 체크 실패 : " + ex.Message);
+            }
+
+            return result;
+        }
+        /// <summary>
+        /// 테이블 생성
+        /// </summary>
+        /// <param name="tableName">테이블이름</param>
+        /// <param name="inputSql">추가Sql</param>
+        /// <returns>영양받은 행수</returns>
+        public int Create(string tableName, string inputSql)
+        {
+            int result = -1;
+            string sql = "Create table \"" + tableName +"\" "+ inputSql;
+
+            if (!CheckTable(tableName))
+            {
+                try
+                {
+                    command = new SQLiteCommand(sql, conn);
+                    result = command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(tableName + "테이블생성실패 : " + ex.Message);
+                }
+            }
+
+            return result;
+        }
+        /// <summary>
+        /// 테이블 데이터 검색
+        /// </summary>
+        /// <param name="tableName">테이블이름</param>
+        /// <param name="inputSql">추가Sql</param>
+        /// <returns>영양받은 행수</returns>
+        public SQLiteCommand Select(string tableName, string inputSql)
+        {
+            if (CheckTable(tableName))
+            {
+                try
+                {
+                    string sql = "Select * from \"" + tableName + "\" " + inputSql;
+                    command = new SQLiteCommand(sql, conn);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(tableName + "테이블검색실패 : " + ex.Message);
+                }
+            }
+
+            return command;
+        }
+        /// <summary>
+        /// 테이블 데이터 수정
+        /// </summary>
+        /// <param name="tableName">테이블이름</param>
+        /// <param name="inputSql">추가Sql</param>
+        /// <returns>영양받은 행수</returns>
+        public int Update(string tableName, string inputSql)
+        {
+            int result = -1;
+            string sql = "Update \"" + tableName + "\" set " + inputSql;
+
+            if (CheckTable(tableName))
+            {
+                try
+                {
+                    command = new SQLiteCommand(sql, conn);
+                    result = command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(tableName + "테이블갱신실패 : " + ex.Message);
+                }
+            }
+
+            return result;
+        }
+        /// <summary>
+        /// 테이블 데이터 삭제
+        /// </summary>
+        /// <param name="tableName">테이블이름</param>
+        /// <param name="inputSql">추가Sql</param>
+        /// <returns>영양받은 행수</returns>
+        public int Delete(string tableName, string inputSql)
+        {
+            int result = -1;
+            string sql = "Delete * from \"" + tableName + "\" "+ inputSql;
+
+            if (CheckTable(tableName))
+            {
+                try
+                {
+                    command = new SQLiteCommand(sql, conn);
+                    result = command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(tableName + "테이블삭제실패 : " + ex.Message);
+                }
+            }
 
             return result;
         }
 
-        public void DBCreate()
+        /// <summary>
+        /// 테이블 데이터 삽입
+        /// </summary>
+        /// <param name="tableName">테이블이름</param>
+        /// <param name="inputSql">추가Sql</param>
+        /// <returns>영양받은 행수</returns>
+        public int Insert(string tableName, string inputSql)
         {
-            Directory.CreateDirectory(Paht);
-        }
+            int result = -1;
+            string sql = "Insert into \""+ tableName + "\" "+ inputSql;
 
-        private void TableCreate(string sql)
-        {
-            command = new SQLiteCommand(sql, conn);
-            result = command.ExecuteNonQuery();
-            Console.WriteLine(result);
+            if (CheckTable(tableName))
+            {
+                try
+                {
+                    command = new SQLiteCommand(sql, conn);
+                    result = command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(tableName + "테이블삽입실패 : " + ex.Message);
+                }
+            }
+
+            return result;
         }
     }
 }

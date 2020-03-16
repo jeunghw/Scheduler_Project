@@ -10,7 +10,6 @@ namespace Schcduler
     {
         public ScheduleData()
         {
-            Phone = "";
             Date = "";
             OnTime = "";
             OffTime = "";
@@ -25,61 +24,56 @@ namespace Schcduler
             NightWage = "";
             TotalWage = "";
         }
-        /// <summary>
-        /// 핸드폰번호
-        /// </summary>
-        public String Phone { get; set; }
-        /// <summary>
         /// 날짜
         /// </summary>
-        public String Date { get; set; }
+        public string Date { get; set; }
         /// <summary>
         /// 출근시간
         /// </summary>
-        public String OnTime { get; set; }
+        public string OnTime { get; set; }
         /// <summary>
         /// 퇴근시간
         /// </summary>
-        public String OffTime { get; set; }
+        public string OffTime { get; set; }
         /// <summary>
         /// 일반시간
         /// </summary>
-        public String Time { get; set; }
+        public string Time { get; set; }
         /// <summary>
         /// 휴계시간
         /// </summary>
-        public String RestTime { get; set; }
+        public string RestTime { get; set; }
         /// <summary>
         /// 연장시간
         /// </summary>
-        public String ExtensionTime { get; set; }
+        public string ExtensionTime { get; set; }
         /// <summary>
         /// 야간시간
         /// </summary>
-        public String NightTime { get; set; }
+        public string NightTime { get; set; }
         /// <summary>
         /// 총시간
         /// </summary>
-        public String TotalTime { get; set; }
+        public string TotalTime { get; set; }
         /// <summary>
         /// 일반시간시급
         /// </summary>
-        public String Wage { get; set; }
+        public string Wage { get; set; }
         /// <summary>
         /// 휴계시간시급
         /// </summary>
-        public String RestWage { get; set; }
+        public string RestWage { get; set; }
         /// <summary>
         /// 연장시간시급
         /// </summary>
-        public String ExtensionWage { get; set; }
+        public string ExtensionWage { get; set; }
         /// <summary>
         /// 야간시간시급
         /// </summary>
-        public String NightWage { get; set; }
+        public string NightWage { get; set; }
         /// <summary>
         /// 총시급
         /// </summary>
-        public String TotalWage { get; set; }
+        public string TotalWage { get; set; }
     }
 }

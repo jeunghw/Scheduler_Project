@@ -35,7 +35,5 @@ namespace Schcduler
         {
             return dBConn;
         }
-
-
     }
 }

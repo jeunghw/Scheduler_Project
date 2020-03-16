@@ -23,8 +23,7 @@ namespace Schcduler
     {
         WageManger wageMenger = new WageManger();
         string sql;
-        DataTable dt = new DataTable();
-
+        DataTable dataTable = new DataTable();
         public WageManagement()
         {
             InitializeComponent();
@@ -72,49 +71,28 @@ namespace Schcduler
 
         private void btnExcel_Click(object sender, RoutedEventArgs e)
         {
-            wageMenger.ExportToExcel(DGSchedule, dt);
+            wageMenger.ExportToExcel(DGSchedule, dataTable);
 
         }
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            sql = "select * from " + DBInfo.TableSchedule + " where Phone=\"" + LoginData.GetLoginData.LoginPhone + "\" and Date Like \"" + year.Text + "-" + month.Text.ToString().PadLeft(2, '0') + "-%\"";
+            //데이터테이블과 데이터베이스 연결
+            dataTable = new DataTable();
+            dataTable = wageMenger.MappingDataTable(year.Text, month.Text);
 
-            //데이터테이블과 데이터베이스 연결     
-            dt = wageMenger.MappingData(sql);
-
-            DGSchedule.ItemsSource = dt.DefaultView;    //데이터 테이블 데이터 그리드 연동
-
-            //데이터테이블에 데이터 리스트 연결, 데이터크리드에 데이터테이블 연결(사용X)
-            /*List<ScheduleData> scheduleDatasList = wageMenger.selectSchedule(sql);
-
-            DGSchedule.ItemsSource = wageMenger.MappingData(scheduleDatasList).DefaultView;*/
-
-            //데이터 그리드에 리스트 연결
-            /*ScheduleData scheduleData = new ScheduleData();
-            int totalWage = 0;
-
-            DGSchedule.Items.Clear();
-
-            foreach (ScheduleData data in scheduleDatasList)
-            {
-                DGSchedule.Items.Add(data);
-                totalWage += Convert.ToInt32(data.TotalWage);
-            }
-
-            scheduleData.Date = "합계";
-            scheduleData.TotalWage = totalWage.ToString();
-            DGSchedule.Items.Add(scheduleData);*/
+            DGSchedule.ItemsSource = dataTable.DefaultView;    //데이터 테이블 데이터 그리드 연동
 
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            if (dt.Rows.Count == 0)
+            if (dataTable.Rows.Count == 0)
             {
                 return;
             }
-            wageMenger.saveDataTable(dt);
+
+            wageMenger.SaveDataTable(dataTable);
 
             Search_Click(this, null);
         }

@@ -9,10 +9,10 @@ namespace Schcduler
 {
     public class TransitionPage
     {
-        static Login pgLogin = new Login();
-        static MainPage pgMain = new MainPage();
-        static public MainWindow window;
-        static public Frame frame;
+        public static Login pgLogin = new Login();
+        public static MainPage pgMain = new MainPage();
+        public static MainWindow window;
+        public static Frame frame;
 
         public static void TransitionPages(int x)
         {

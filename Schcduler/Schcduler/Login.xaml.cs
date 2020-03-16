@@ -38,24 +38,27 @@ namespace Schcduler
             {
                 return;
             }
-            LoginData.GetLoginData.LoginPhone = tbId.Text.Trim();
-            LoginData.GetLoginData.LoginPassword = tbPassword.Text.Trim();
 
-            MemberData dbmember = loginManager.selectMember();
+            LoginData inputLoginData = new LoginData();
+            inputLoginData.Phone = tbId.Text.Trim();
+            inputLoginData.Password = tbPassword.Text.Trim();
 
-            LoginData.GetLoginData.Wage = dbmember.Wage;
-            LoginData.GetLoginData.UserName = dbmember.Name;
+            LoginData loginData = new LoginData();
 
-            if (dbmember.Phone.Equals(""))
+            loginData = loginManager.Select(inputLoginData);
+
+            if (loginData.Phone.Equals(""))
             {
                 MyMessageBox.createMessageBox(1, "핸드폰번호가 없습니다.", "");
                 return;
             }
-            if (!dbmember.Password.Equals(LoginData.GetLoginData.LoginPassword))
+            if (!loginData.Password.Equals(inputLoginData.Password))
             {
                 MyMessageBox.createMessageBox(1, "비밀번호가 틀렸습니다.", "");
                 return;
             }
+
+            loginManager.SetMemberData(loginData);
 
             tbId.Clear();
             tbPassword.Clear();
@@ -66,6 +69,8 @@ namespace Schcduler
 
         private void btnInput_Click(object sender, RoutedEventArgs e)
         {
+            LoginData loginData = new LoginData();
+
             if (tbId.Text.Trim().Length < 10)
             {
                 MyMessageBox.createMessageBox(1, "핸드폰번호를 확인하세요.", "");
@@ -73,15 +78,14 @@ namespace Schcduler
                 return;
             }
 
-            LoginData.GetLoginData.LoginPhone = tbId.Text.Trim();
-
-            Button btn = sender as Button;
-
-            wageMenger.insertTime();
+            loginData.Phone = tbId.Text.Trim();
+            wageMenger.OnWork(loginData);
         }
 
         private void btnOffInput_Click(object sender, RoutedEventArgs e)
         {
+            LoginData loginData = new LoginData();
+
             if (tbId.Text.Trim().Length < 10)
             {
                 MyMessageBox.createMessageBox(1, "핸드폰번호를 확인하세요.", "");
@@ -89,15 +93,13 @@ namespace Schcduler
                 return;
             }
 
-            LoginData.GetLoginData.LoginPhone = tbId.Text.Trim();
+            loginData.Phone = tbId.Text.Trim();
 
             Button btn = sender as Button;
 
-            if(wageMenger.updateTime()==0)
-            {
-                return;
-            }
-            wageMenger.WageCalculationt(wageMenger.scheduleDatasLists[0].OnTime, DateTime.Now.ToString("HH:mm"), DateTime.Now.ToString("yyyy-MM-dd"));
+            wageMenger.OffWork(loginData);
+            
+            wageMenger.WageCalculation(loginData.Phone, DateTime.Now.ToString("yyyy-MM-dd"));
         }
 
         private void tbPassword_KeyDown(object sender, KeyEventArgs e)

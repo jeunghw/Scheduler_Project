@@ -25,10 +25,17 @@ namespace Schcduler
         string sql;
         DBConn dBConn = MainWindow.GetDBConn();
         LoginManager loginManager = new LoginManager();
+        LoginData loginData = new LoginData();
+        JoinManager joinManager = new JoinManager();
 
         public Join()
         {
             InitializeComponent();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            InitComboBox();
         }
 
         private void btnJoin_Click(object sender, RoutedEventArgs e)
@@ -38,28 +45,27 @@ namespace Schcduler
                 return;
             }
 
-            LoginData.GetLoginData.LoginPhone = txtPhone.Text.Trim();
-            LoginData.GetLoginData.LoginPassword = txtPassword.Text.Trim();
-            LoginData.GetLoginData.UserName = txtName.Text.Trim();
-            LoginData.GetLoginData.Wage = tbWage.Text.Trim();
+            loginData.Phone = txtPhone.Text.Trim();
+            loginData.Password = txtPassword.Text.Trim();
+            loginData.Name = txtName.Text.Trim();
+            loginData.Wage = tbWage.Text.Trim();
+            loginData.Authority = cbAuthority.SelectedIndex+1; 
 
-            if (LoginData.GetLoginData.LoginPhone.Equals(loginManager.selectMember().Phone))
+            if (loginData.Phone.Equals(loginManager.Select(loginData).Phone))
             {
                 MyMessageBox.createMessageBox(1, "핸드폰번호가 중복됩니다.", "");
                 return;
             }
 
-            sql = "insert into " + DBInfo.TableMember + " values(\"" + LoginData.GetLoginData.LoginPhone + "\",\"" +
-                LoginData.GetLoginData.LoginPassword + "\", \"" + LoginData.GetLoginData.UserName + "\",\"" + LoginData.GetLoginData.Wage + "\")";
-
-            dBConn.DBOpen();
-            dBConn.DBManipulation(sql);
-            dBConn.DBClose();
+            joinManager.Create(loginData);
+            joinManager.Insert(loginData);
 
             txtName.Clear();
             txtPassword.Clear();
             txtPhone.Clear();
             tbWage.Clear();
+
+            MessageBox.Show("가입이 완료되었습니다.");
 
         }
 
@@ -117,6 +123,27 @@ namespace Schcduler
         {
             Regex regex = new Regex("[^0-9.-]+");
             e.Handled = regex.IsMatch(e.Text);
+        }
+
+        /// <summary>
+        /// 콤보박스 초기화
+        /// </summary>
+        private void InitComboBox()
+        {
+            List<ComboBoxItem> AuthorityItems = new List<ComboBoxItem>();
+
+            string[] Authority = { "관리자", "매니저", "일반직원" };
+
+            for (int i = 0; i< Authority.Length; i++)
+            {
+                ComboBoxItem item = new ComboBoxItem();
+                item.Content = Authority[i];
+                AuthorityItems.Add(item);
+            }
+
+            cbAuthority.ItemsSource = AuthorityItems;
+            cbAuthority.SelectedIndex = 2;
+
         }
     }
 }

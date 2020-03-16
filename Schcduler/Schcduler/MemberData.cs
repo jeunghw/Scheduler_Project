@@ -6,18 +6,32 @@ using System.Threading.Tasks;
 
 namespace Schcduler
 {
-    public class MemberData
+    class MemberData
     {
-        public MemberData()
+        private static MemberData memberData = new MemberData();
+        private MemberData() 
         {
             Phone = "";
             Password = "";
             Name = "";
             Wage = "";
+            AuthorityData = new AuthorityData();
         }
         public string Phone { get; set; }
         public string Password { get; set; }
+        /// <summary>
+        /// 사용자이름
+        /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// 시급
+        /// </summary>
         public string Wage { get; set; }
+        /// <summary>
+        /// 권한
+        /// </summary>
+        public AuthorityData AuthorityData { get; set; }
+
+        public static MemberData GetMemberData { get => memberData; }
     }
 }
