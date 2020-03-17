@@ -69,9 +69,11 @@ namespace Schcduler
             }
 
             cbName.ItemsSource = NameItems;
-            cbName.SelectedIndex = 0;
+            //콤보박스 인덱스를 자기자신으로 설정
+            //현재 로그인된 사용자의 핸드폰번호로 loginDataList에서 검색해서 해당 객체를 가져온뒤 해당 객체가 몇번째 인덱스인지 검색
+            cbName.SelectedIndex = loginDataList.IndexOf(loginDataList.Find(x => x.Phone.Contains(MemberData.GetMemberData.Phone)));
 
-            if(MemberData.GetMemberData.AuthorityData.Authority==0)
+            if (MemberData.GetMemberData.AuthorityData.Authority==0)
             {
                 btnSchedule.Visibility = Visibility.Hidden;
                 btnTab2_Click(this, null);

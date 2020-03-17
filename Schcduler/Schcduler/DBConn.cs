@@ -243,7 +243,7 @@ namespace Schcduler
         public int Delete(string tableName, string inputSql)
         {
             int result = -1;
-            string sql = "Delete * from \"" + tableName + "\" "+ inputSql;
+            string sql = "Delete from \"" + tableName + "\" "+ inputSql;
 
             if (CheckTable(tableName))
             {

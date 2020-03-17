@@ -20,11 +20,17 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <ComboBox Name="year" Width="80" Grid.Column="0"/>
-                <ComboBox Name="month" Width="50" Grid.Column="1"/>
+                <ComboBox Name="month" Width="50" Grid.Column="1" SelectionChanged="month_SelectionChanged"/>
                 <Button x:Name="Search" Width="40" Content="검색" Grid.Column="2" Click="Search_Click"/>
-                <Button x:Name="Save" Width="40" Content="저장" Grid.Column="3" Click="Save_Click"/>
+                <ComboBox Name="cbDay" Width="50" Grid.Column="3" IsEnabled="False"/>
+                <Button x:Name="btnAddRow" Width="60" Content="행추가" Grid.Column="4" Click="btnAddRow_Click" IsEnabled="False"/>
+                <Button x:Name="Save" Width="40" Content="저장" Grid.Column="5" Click="Save_Click"/>
+                <Button x:Name="btnDelete" Width="40" Content="삭제" Grid.Column="6" Click="btnDelete_Click"/>
             </Grid>
             <Grid HorizontalAlignment="Right">
                 <Grid.ColumnDefinitions>
