@@ -2,8 +2,7 @@ C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\bin\x86\Debug
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\bin\x86\Debug\Schcduler.exe
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\bin\x86\Debug\Schcduler.pdb
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\bin\x86\Debug\System.Data.SQLite.dll
-C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Schcduler.csprojAssemblyReference.cache
-C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Join.g.cs
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\MemberManagement.g.cs
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Login.g.cs
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\MainWindow.g.cs
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\MainPage.g.cs
@@ -11,7 +10,7 @@ C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\App.g.cs
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Schcduler_MarkupCompile.cache
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Schcduler_MarkupCompile.lref
-C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Join.baml
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\MemberManagement.baml
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Login.baml
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\MainWindow.baml
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\MainPage.baml
@@ -22,3 +21,4 @@ C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Schcduler.csproj.CopyComplete
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Schcduler.exe
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Schcduler.pdb
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\Schcduler\Schcduler\obj\x86\Debug\Schcduler.csprojAssemblyReference.cache

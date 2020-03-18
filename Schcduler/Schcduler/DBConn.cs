@@ -8,7 +8,7 @@ namespace Schcduler
     {
         private string Path = Directory.GetCurrentDirectory() + "\\..\\..\\..\\DB";                   //데이터베이스 위치
         protected SQLiteConnection conn = null;                                                     //SQL커낵션을 위한 객체
-        SQLiteCommand command;
+
 
         public DBConn()
         {
@@ -133,6 +133,7 @@ namespace Schcduler
         /// </returns>
         public bool CheckTable(string tableName)
         {
+            SQLiteCommand command = null;
             SQLiteDataReader reader;
             bool result = false;
             string sql = "Select name from sqlite_master where name=\"" + tableName + "\"";
@@ -167,6 +168,7 @@ namespace Schcduler
         /// <returns>영양받은 행수</returns>
         public int Create(string tableName, string inputSql)
         {
+            SQLiteCommand command = null;
             int result = -1;
             string sql = "Create table \"" + tableName +"\" "+ inputSql;
 
@@ -185,6 +187,53 @@ namespace Schcduler
 
             return result;
         }
+
+        /// <summary>
+        /// 테이블 제거
+        /// </summary>
+        /// <param name="tableName">제거할 테이블 명</param>
+        /// <returns></returns>
+        public int Drop(string tableName)
+        {
+            SQLiteCommand command = null;
+            SQLiteDataReader reader = null;
+            int result = -1;
+            string sql = "Select name from sqlite_master where name like \""+tableName+"%\"";
+            string tableNamePull = "";
+
+            try
+            {
+                command = new SQLiteCommand(sql, conn);
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    tableNamePull = reader["name"].ToString();
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("DBConn:Drop 테이블 검색 실패 :" + e.Message);
+            }
+
+            sql = "Drop table \"" + tableNamePull + "\"";
+
+            if (CheckTable(tableNamePull))
+            {
+                try
+                {
+                    command = new SQLiteCommand(sql, conn);
+                    result = command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(tableNamePull + "테이블삭제실패 : " + ex.Message);
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// 테이블 데이터 검색
         /// </summary>
@@ -193,6 +242,8 @@ namespace Schcduler
         /// <returns>영양받은 행수</returns>
         public SQLiteCommand Select(string tableName, string inputSql)
         {
+            SQLiteCommand command = null;
+
             if (CheckTable(tableName))
             {
                 try
@@ -216,6 +267,7 @@ namespace Schcduler
         /// <returns>영양받은 행수</returns>
         public int Update(string tableName, string inputSql)
         {
+            SQLiteCommand command = null;
             int result = -1;
             string sql = "Update \"" + tableName + "\" set " + inputSql;
 
@@ -242,6 +294,7 @@ namespace Schcduler
         /// <returns>영양받은 행수</returns>
         public int Delete(string tableName, string inputSql)
         {
+            SQLiteCommand command = null;
             int result = -1;
             string sql = "Delete from \"" + tableName + "\" "+ inputSql;
 
@@ -269,6 +322,7 @@ namespace Schcduler
         /// <returns>영양받은 행수</returns>
         public int Insert(string tableName, string inputSql)
         {
+            SQLiteCommand command = null;
             int result = -1;
             string sql = "Insert into \""+ tableName + "\" "+ inputSql;
 

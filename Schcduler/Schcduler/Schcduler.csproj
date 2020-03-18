@@ -113,19 +113,18 @@
     <Compile Include="AuthorityManager.cs" />
     <Compile Include="DBConn.cs" />
     <Compile Include="DataBaseData.cs" />
-    <Compile Include="Join.xaml.cs">
-      <DependentUpon>Join.xaml</DependentUpon>
+    <Compile Include="MemberManagement.xaml.cs">
+      <DependentUpon>MemberManagement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JoinManager.cs" />
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
     <Compile Include="LoginData.cs" />
-    <Compile Include="LoginManager.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MemberData.cs" />
+    <Compile Include="MemberManager.cs" />
     <Compile Include="MyMessageBox.cs" />
     <Compile Include="ScheduleData.cs" />
     <Compile Include="TransitionPage.cs" />
@@ -133,7 +132,7 @@
       <DependentUpon>WageManagement.xaml</DependentUpon>
     </Compile>
     <Compile Include="WageManger.cs" />
-    <Page Include="Join.xaml">
+    <Page Include="MemberManagement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

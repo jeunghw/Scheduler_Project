@@ -19,16 +19,18 @@ namespace Schcduler
         DBConn dBConn = MainWindow.GetDBConn();
 
 
-        public ScheduleData Select(string phone, string date)
+        public ScheduleData Select(string tableName, string date)
         {
             SQLiteCommand command;
             SQLiteDataReader reader;
             ScheduleData scheduleData = new ScheduleData();
             string sql = "where Date=\""+date+"\"";
 
+            string year = SplitString(date, '-')[0];
+
             dBConn.DBOpen();
 
-            command = dBConn.Select(phone, sql);
+            command = dBConn.Select(tableName+ year, sql);
             reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -66,8 +68,10 @@ namespace Schcduler
                 + scheduleData.Wage + "\", RestWage = \"" + scheduleData.RestWage + "\", " + "ExtensionWage = \"" + scheduleData.ExtensionWage + "\", NightWage = \"" + scheduleData.NightWage + 
                 "\", TotalWage = \"" + scheduleData.TotalWage + "\" where Date = \"" + scheduleData.Date + "\"";
 
+            string year = SplitString(scheduleData.Date, '-')[0];
+
             dBConn.DBOpen();
-            dBConn.Update(tableName, sql);
+            dBConn.Update(tableName+ year, sql);
             dBConn.DBClose();
 
             return result;
@@ -85,8 +89,10 @@ namespace Schcduler
                 + scheduleData.ExtensionTime + "\", \"" + scheduleData.NightTime + "\", \"" + scheduleData.TotalTime + "\", \"" + scheduleData.Wage + "\", \"" + scheduleData.RestWage +
                 "\", \"" + scheduleData.ExtensionWage + "\", \"" + scheduleData.NightWage + "\", \"" + scheduleData.TotalWage + "\")";
 
+            string year = SplitString(scheduleData.Date, '-')[0];
+
             dBConn.DBOpen();
-            dBConn.Insert(tableName, sql);
+            dBConn.Insert(tableName+ year, sql);
             dBConn.DBClose();
 
             return result;
@@ -103,8 +109,10 @@ namespace Schcduler
             int result = -1;
             string sql = "where Date=\"" + scheduleData.Date + "\"";
 
+            string year = SplitString(scheduleData.Date, '-')[0];
+
             dBConn.DBOpen();
-            dBConn.Delete(tableName, sql);
+            dBConn.Delete(tableName+year, sql);
             dBConn.DBClose();
 
             return result;
@@ -121,7 +129,7 @@ namespace Schcduler
             if (!CheckDate(loginData, DateTime.Now.ToString("yyyy-MM-dd")))
             {
                 dBConn.DBOpen();
-                dBConn.Insert(loginData.Phone, sql);
+                dBConn.Insert(loginData.Phone+DateTime.Now.ToString("yyyy"), sql);
                 dBConn.DBClose();
             }
 
@@ -137,7 +145,7 @@ namespace Schcduler
             int result = -1;
             string date = DateTime.Now.ToString("yyyy-MM-dd");
             string time = DateTime.Now.ToString("HH:mm");
-            string sql = "OffTime =\"" + time + "\" where Date=\"" + date + "\"";
+            string sql;
 
             //24시가 넘어가서 퇴근한것인지 여부를 확인
             string[] swapTime = time.Split(':');
@@ -146,21 +154,20 @@ namespace Schcduler
             if (Convert.ToInt32(swapTime[0]) < 5)
             {
                 swapTime[0] = (Convert.ToInt32(swapTime[0]) + 24).ToString();
-                swapDate[3] = (Convert.ToInt32(swapDate) - 1).ToString();
+                swapDate[2] = (Convert.ToInt32(swapDate[2]) - 1).ToString();
 
                 time = swapTime[0] + ":" + swapTime[1];
                 date = swapDate[0] + "-" + swapDate[1] + "-" + swapDate[2];
 
-                dBConn.DBOpen();
-                result = dBConn.Update(loginData.Phone, sql);
-                dBConn.DBClose();
             }
+
+            sql = "OffTime =\"" + time + "\" where Date=\"" + date + "\"";
 
             //출근을 했는지 확인
             if (CheckDate(loginData, date))
             {
                 dBConn.DBOpen();
-                result = dBConn.Update(loginData.Phone, sql);
+                result = dBConn.Update(loginData.Phone+DateTime.Now.ToString("yyyy"), sql);
                 dBConn.DBClose();
             }
 
@@ -183,26 +190,32 @@ namespace Schcduler
             SQLiteDataReader reader;
             bool result = false;
             string sql = " where Date=\""+ date + "\"";
-            
-            dBConn.DBOpen();
-            command = dBConn.Select(loginData.Phone, sql);
 
-            try
+            string year = SplitString(date, '-')[0];
+
+            dBConn.DBOpen();
+            command = dBConn.Select(loginData.Phone+year, sql);
+
+            if (command != null)
             {
-                reader = command.ExecuteReader();
-                reader.Read();
-                if (reader["Date"].ToString().Equals(""))
+                try
                 {
-                    result = false;
+                    reader = command.ExecuteReader();
+                    reader.Read();
+                    if (reader["Date"].ToString().Equals(""))
+                    {
+                        result = false;
+                    }
+                    else
+                    {
+                        result = true;
+                    }
                 }
-                else
+
+                catch (Exception ex)
                 {
-                    result = true;
+                    Console.WriteLine("날짜체크실패 : " + ex.Message);
                 }
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine("날짜체크실패 : " + ex.Message);
             }
             dBConn.DBClose();
             
@@ -269,7 +282,7 @@ namespace Schcduler
                         Time -= 1;
                         Minute = (OffMinute + 60) - OnMinute;
                     }
-                    scheduleData.Time = Time + ":" + Minute;
+                    scheduleData.Time = Time + ":" + Minute.ToString().PadLeft(2,'0');
                 }
                 //야간시간
                 else
@@ -293,11 +306,11 @@ namespace Schcduler
                             Minute -= 60;
                         }
                     }
-                    scheduleData.Time = Time + ":" + Minute;
+                    scheduleData.Time = Time + ":" + Minute.ToString().PadLeft(2, '0');
 
                     Time = OffTime - 22;
                     Minute = OffMinute;
-                    scheduleData.NightTime = Time + ":" + Minute;
+                    scheduleData.NightTime = Time + ":" + Minute.ToString().PadLeft(2, '0');
                 }
             }
             //오전 6시 이전 출근
@@ -308,7 +321,7 @@ namespace Schcduler
                 {
                     Time = OffTime - 6;
                     Minute = OffMinute;
-                    scheduleData.Time = Time + ":" + Minute;
+                    scheduleData.Time = Time + ":" + Minute.ToString().PadLeft(2, '0');
                 }
                 //야간시간
                 else
@@ -323,7 +336,7 @@ namespace Schcduler
                         Time -= 1;
                         Minute = (OffMinute + 60) - OnMinute;
                     }
-                    scheduleData.NightTime = Time + ":" + Minute;
+                    scheduleData.NightTime = Time + ":" + Minute.ToString().PadLeft(2, '0');
                 }
             }
 
@@ -347,7 +360,7 @@ namespace Schcduler
                 Time += 1;
                 Minute -= 60;
             }
-            scheduleData.TotalTime = Time + ":" + Minute;
+            scheduleData.TotalTime = Time + ":" + Minute.ToString().PadLeft(2, '0');
 
             //휴계시간
             if ((Time / 4) > 0)
@@ -359,7 +372,7 @@ namespace Schcduler
                     Time += 1;
                     Minute -= 60;
                 }
-                scheduleData.RestTime = Time + ":" + Minute;
+                scheduleData.RestTime = Time + ":" + Minute.ToString().PadLeft(2, '0');
             }
 
             //연장시간
@@ -369,7 +382,7 @@ namespace Schcduler
             if (Time > 8)
             {
                 Time -= 8;
-                scheduleData.ExtensionTime = Time + ":" + Minute;
+                scheduleData.ExtensionTime = Time + ":" + Minute.ToString().PadLeft(2, '0');
 
                 //일반시간에서 연장시간 빼기
                 int Time1, Minute1;
@@ -453,12 +466,6 @@ namespace Schcduler
             scheduleData.TotalWage = (Convert.ToInt32(scheduleData.Wage) + Convert.ToInt32(scheduleData.ExtensionWage)
                 + Convert.ToInt32(scheduleData.NightWage) - Convert.ToInt32(scheduleData.RestWage)).ToString();
 
-            if(OffTime > 24)
-            {
-                string[] sawp = SplitString(scheduleData.Date, '-');
-                swap[2] = (Convert.ToInt32(swap[2]) - 1).ToString();
-                scheduleData.Date = swap[0] + "-" + swap[1] + "-" + swap[2];
-            }
 
             Update(phone, scheduleData);
         }
@@ -495,7 +502,7 @@ namespace Schcduler
             SQLiteDataAdapter adapter;
             DataTable dataTable = new DataTable();
             DataSet dataSet = new DataSet();
-            string sql = "where Date LIKE \"" + yaer + "-" + month.PadLeft(2,'0') + "-" + "%\"";
+            string sql = "where Date LIKE \"" + yaer + "-" + month.PadLeft(2,'0') + "-" + "%\" Order by Date";
             string phone ="";
 
             //사용자의 권한이 일반직원인지 확인
@@ -515,26 +522,36 @@ namespace Schcduler
             dBConn.DBOpen();
 
             //DB에 핸드폰 번호와 sql 전달, 핸드폰 번호는 DB의 테이블명
-            command = dBConn.Select(phone, sql);
+            command = dBConn.Select(phone+yaer, sql);
             adapter = new SQLiteDataAdapter(command);
             adapter.Fill(dataSet);
             dataTable = dataSet.Tables[0];
 
             int TotalWage = 0;
 
-            foreach (DataRow row in dataTable.Rows)
+            if (dataTable.Rows.Count != 0)
             {
-                if(!row["TotalWage"].ToString().Equals(""))
+                foreach (DataRow row in dataTable.Rows)
                 {
-                    TotalWage += Convert.ToInt32(row["TotalWage"]);
+                    if (!row["TotalWage"].ToString().Equals(""))
+                    {
+                        TotalWage += Convert.ToInt32(row["TotalWage"]);
+                    }
                 }
             }
 
-            DataRow datarow = dataTable.NewRow();
-            datarow["NightWage"] = "합계";
-            datarow["TotalWage"] = TotalWage;
+            try
+            {
+                DataRow datarow = dataTable.NewRow();
+                datarow["NightWage"] = "합계";
+                datarow["TotalWage"] = TotalWage;
 
-            dataTable.Rows.Add(datarow);
+                dataTable.Rows.Add(datarow);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("MappingDataTable : " + e.Message);
+            }
 
             dBConn.DBClose();
 
@@ -826,6 +843,12 @@ namespace Schcduler
             Excel.Application excel = new Excel.Application();
             Excel.Workbook workbook = excel.Workbooks.Add();
             Excel.Worksheet worksheet = excel.ActiveSheet;
+            string saveDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) +"\\ExcelFiles";
+
+            if(!Directory.Exists(saveDirectory))
+            {
+                Directory.CreateDirectory(saveDirectory);
+            }
 
             if (dataGrid.Items.Count == 0)
             {
@@ -864,7 +887,7 @@ namespace Schcduler
                 saveFile.CheckPathExists = true;
                 saveFile.AddExtension = true;
                 saveFile.ValidateNames = true;
-                saveFile.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                saveFile.InitialDirectory = saveDirectory;
 
                 saveFile.DefaultExt = ".xlsx";
                 saveFile.Filter = "Microsoft Excel Workbook (*.xls)|*.xlsx";
@@ -880,7 +903,7 @@ namespace Schcduler
                     Name = TransitionPage.pgMain.cbName.Text;
                 }
                 saveFile.FileName = Name;
-                workbook.SaveAs(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + saveFile.FileName);
+                workbook.SaveAs(saveDirectory + "\\" + saveFile.FileName);
 
                 workbook.Close();
                 excel.Quit();
@@ -889,7 +912,7 @@ namespace Schcduler
                 releaseObject(workbook);
                 releaseObject(excel);
 
-                Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + saveFile.FileName + ".xlsx");
+                Process.Start(saveDirectory + "\\" + saveFile.FileName + ".xlsx");
             }
             catch (Exception ex)
             {

@@ -17,13 +17,29 @@ namespace Schcduler
         /// <param name="number">메세지박스종류선택</param>
         /// <param name="Contents">내용</param>
         /// <param name="title">제목</param>
-        public static void createMessageBox(int number, string Contents, string title)
+        public static int createMessageBox(int number, string Contents, string title)
         {
+            int result = -1;
+
             if (number == 1)
             {
                 MessageBox.Show(Contents, title);
+                result = 0;
+
+            }
+            else if(number==2)
+            {
+                if(MessageBox.Show(Contents, title, MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = 1;
+                }
             }
 
+            return result;
         }
     }
 }

@@ -21,8 +21,7 @@ namespace Schcduler
     /// </summary>
     public partial class Login : Page
     {
-
-        LoginManager loginManager = new LoginManager();
+        MemberManager memberManager = new MemberManager();
         WageManger wageMenger = new WageManger();
 
         public Login()
@@ -45,7 +44,7 @@ namespace Schcduler
 
             LoginData loginData = new LoginData();
 
-            loginData = loginManager.Select(inputLoginData);
+            loginData = memberManager.Select(inputLoginData);
 
             if (loginData.Phone.Equals(""))
             {
@@ -58,7 +57,7 @@ namespace Schcduler
                 return;
             }
 
-            loginManager.SetMemberData(loginData);
+            memberManager.SetMemberData(loginData);
 
             tbId.Clear();
             tbPassword.Clear();
@@ -66,6 +65,7 @@ namespace Schcduler
             TransitionPage.TransitionPages(1);
             TransitionPage.TransitionFrame(0);
         }
+
 
         private void btnInput_Click(object sender, RoutedEventArgs e)
         {
@@ -79,12 +79,19 @@ namespace Schcduler
             }
 
             loginData.Phone = tbId.Text.Trim();
+
+            //년도가 바뀌면 자동으로 테이블을 생성
+            memberManager.Create(loginData);
+
             wageMenger.OnWork(loginData);
+            tbId.Clear();
         }
 
         private void btnOffInput_Click(object sender, RoutedEventArgs e)
         {
             LoginData loginData = new LoginData();
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
+            string time = DateTime.Now.ToString("HH:mm");
 
             if (tbId.Text.Trim().Length < 10)
             {
@@ -98,8 +105,19 @@ namespace Schcduler
             Button btn = sender as Button;
 
             wageMenger.OffWork(loginData);
-            
-            wageMenger.WageCalculation(loginData.Phone, DateTime.Now.ToString("yyyy-MM-dd"));
+
+            string[] swapTime = time.Split(':');
+            string[] swapDate = date.Split('-');
+
+            if (Convert.ToInt32(swapTime[0]) < 5)
+            {
+                swapDate[2] = (Convert.ToInt32(swapDate[2]) - 1).ToString();
+                date = swapDate[0] + "-" + swapDate[1] + "-" + swapDate[2];
+
+            }
+
+            wageMenger.WageCalculation(loginData.Phone, date);
+            tbId.Clear();
         }
 
         private void tbPassword_KeyDown(object sender, KeyEventArgs e)

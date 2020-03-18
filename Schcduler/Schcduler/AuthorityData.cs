@@ -13,6 +13,7 @@ namespace Schcduler
             SignUp = -1;
             Modify = -1;
             Search = -1;
+            Delete = -1;
         }
         /// <summary>
         /// 권한
@@ -37,7 +38,10 @@ namespace Schcduler
         /// 관리자, 매니저
         /// </summary>
         public int Search { get; set; }
-
-
+        /// <summary>
+        /// 삭제권한
+        /// 프로그램관리자, 관리자
+        /// </summary>
+        public int Delete { get; set; }
     }
 }

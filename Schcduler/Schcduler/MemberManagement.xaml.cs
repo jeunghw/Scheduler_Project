@@ -24,9 +24,8 @@ namespace Schcduler
 
         string sql;
         DBConn dBConn = MainWindow.GetDBConn();
-        LoginManager loginManager = new LoginManager();
         LoginData loginData = new LoginData();
-        JoinManager joinManager = new JoinManager();
+        MemberManager memberManager = new MemberManager();
 
         public Join()
         {
@@ -35,7 +34,17 @@ namespace Schcduler
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            InitComboBox();
+            InitCBJoin();
+            initCBSecession();
+
+            if ((MemberData.GetMemberData.AuthorityData.Authority == 0) || (MemberData.GetMemberData.AuthorityData.Authority == 1))
+            {
+                btnSecession.IsEnabled = true;
+            }
+            else
+            {
+                btnSecession.IsEnabled = false;
+            }
         }
 
         private void btnJoin_Click(object sender, RoutedEventArgs e)
@@ -51,22 +60,42 @@ namespace Schcduler
             loginData.Wage = tbWage.Text.Trim();
             loginData.Authority = cbAuthority.SelectedIndex+1; 
 
-            if (loginData.Phone.Equals(loginManager.Select(loginData).Phone))
+            if (loginData.Phone.Equals(memberManager.Select(loginData).Phone))
             {
                 MyMessageBox.createMessageBox(1, "핸드폰번호가 중복됩니다.", "");
                 return;
             }
 
-            joinManager.Create(loginData);
-            joinManager.Insert(loginData);
+            memberManager.Insert(loginData);
+            memberManager.Create(loginData);
 
             txtName.Clear();
             txtPassword.Clear();
             txtPhone.Clear();
             tbWage.Clear();
 
+            TransitionPage.pgMain.InitComboBox();
+            initCBSecession();
+
             MessageBox.Show("가입이 완료되었습니다.");
 
+        }
+
+        private void btnSecession_Click(object sender, RoutedEventArgs e)
+        {
+            string sql = "where Phone=\"" + tbPhone2.Text + "\"";
+
+            dBConn.DBOpen();
+
+            if(MyMessageBox.createMessageBox(2, "이름 : "+cbName.Text+" 핸드폰번호 : "+tbPhone2.Text+" 사용자를 삭제하시겠습니까?", "회원삭제확인")==0)
+            {
+                dBConn.Delete(DataBaseData.TableMember, sql);
+                dBConn.Drop(tbPhone2.Text);
+            }
+
+            dBConn.DBClose();
+
+            initCBSecession();
         }
 
         private void txtPhone_KeyDown(object sender, KeyEventArgs e)
@@ -128,7 +157,7 @@ namespace Schcduler
         /// <summary>
         /// 콤보박스 초기화
         /// </summary>
-        private void InitComboBox()
+        private void InitCBJoin()
         {
             List<ComboBoxItem> AuthorityItems = new List<ComboBoxItem>();
 
@@ -144,6 +173,39 @@ namespace Schcduler
             cbAuthority.ItemsSource = AuthorityItems;
             cbAuthority.SelectedIndex = 2;
 
+        }
+
+        List<LoginData> loginDataList= new List<LoginData>();
+        private void initCBSecession()
+        {
+            MemberManager memberManager = new MemberManager();
+            List<ComboBoxItem> NameItems = new List<ComboBoxItem>();
+
+            loginDataList = memberManager.SelectName();
+
+            foreach (LoginData data in loginDataList)
+            {
+                ComboBoxItem item = new ComboBoxItem();
+                item.Content = data.Name;
+                NameItems.Add(item);
+            }
+
+            cbName.SelectedIndex = 0;
+            cbName.ItemsSource = NameItems;
+
+        }
+
+        private void cbName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbName.SelectedIndex == -1)
+            {
+                tbPhone2.Text = loginDataList[0].Phone;
+                cbName.SelectedIndex = 0;
+            }
+            else
+            {
+                tbPhone2.Text = loginDataList[cbName.SelectedIndex].Phone;
+            }
         }
     }
 }

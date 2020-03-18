@@ -30,6 +30,7 @@ namespace Schcduler
                 authorityData.SignUp = Convert.ToInt32(rdr["SignUp"]);
                 authorityData.Modify = Convert.ToInt32(rdr["Modify"]);
                 authorityData.Search = Convert.ToInt32(rdr["Search"]);
+                authorityData.Delete = Convert.ToInt32(rdr["Delete"]);
             }
 
             dBConn.DBClose();
@@ -37,31 +38,5 @@ namespace Schcduler
             return authorityData;
         }
 
-        public List<LoginData> SelectName()
-        {
-            SQLiteCommand command;
-            SQLiteDataReader reader;
-            List<LoginData> loginDataList = new List<LoginData>();
-            
-            dBConn.DBOpen();
-
-            command = dBConn.Select(DataBaseData.TableMember, "");
-            reader = command.ExecuteReader();
-
-            while(reader.Read())
-            {
-                LoginData loginData = new LoginData();
-
-                loginData.Phone = reader["Phone"].ToString();
-                loginData.Name = reader["Name"].ToString();
-
-                if (!loginData.Phone.Equals("00000000000"))
-                {
-                    loginDataList.Add(loginData);
-                }
-            }
-
-            return loginDataList;
-        }
     }
 }
