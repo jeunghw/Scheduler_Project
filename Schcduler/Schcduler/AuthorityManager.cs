@@ -30,7 +30,7 @@ namespace Schcduler
                 authorityData.SignUp = Convert.ToInt32(rdr["SignUp"]);
                 authorityData.Modify = Convert.ToInt32(rdr["Modify"]);
                 authorityData.Search = Convert.ToInt32(rdr["Search"]);
-                authorityData.Delete = Convert.ToInt32(rdr["Delete"]);
+                authorityData.Remove = Convert.ToInt32(rdr["Delete"]);
             }
 
             dBConn.DBClose();

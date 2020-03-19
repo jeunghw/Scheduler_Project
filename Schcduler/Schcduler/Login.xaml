@@ -23,7 +23,7 @@
             <Label x:Name="Phone" Grid.Row="0" Grid.Column="0" Content="핸드폰번호 : "/>
             <TextBox x:Name="tbId" Grid.Row="0" Grid.Column="1" MaxLength="11" TabIndex="1" KeyDown="tbId_KeyDown" PreviewTextInput="tbId_PreviewTextInput"/>
             <Label x:Name="lbPassword"  Grid.Row="1" Grid.Column="0" Content="비밀번호 : "/>
-            <TextBox x:Name="tbPassword" Grid.Row="1" Grid.Column="1" TabIndex="60" KeyDown="tbPassword_KeyDown" MaxLength="8"/>
+            <PasswordBox x:Name="pbPassword" Grid.Row="1" Grid.Column="1" TabIndex="60" KeyDown="pbPassword_KeyDown" MaxLength="8"/>
 
             <Button x:Name="btnLogin" Content="로그인" Height="25" Grid.Column="2" Grid.Row="2" Click="btnLogin_Click" SnapsToDevicePixels="True" TabIndex="70"/>
             <Grid Grid.Row="2" Grid.Column="0">

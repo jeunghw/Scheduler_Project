@@ -80,14 +80,14 @@ namespace Schcduler
 
             if (!CheckTable(DataBaseData.TableMember))
             {
-                sql = "(Phone char(11), Password varchar(8), Name varchar(8), Wage varchar(8), Authority int(2), primary Key(\"Phone\"))";
+                sql = "(Phone char(11), Password varchar(50), Name varchar(8), Wage varchar(8), Authority int(2), primary Key(\"Phone\"))";
                 Create(DataBaseData.TableMember, sql);
                 MemberDataInsert();
             }
 
             if (!CheckTable(DataBaseData.TableAuthority))
             { 
-                sql = "(Authority char(2), SignUp char(1), Modify char(1), Search char(1), primary Key(\"Authority\"))";
+                sql = "(Authority char(2), SignUp char(1), Modify char(1), Search char(1), Remove char(1), primary Key(\"Authority\"))";
                 Create(DataBaseData.TableAuthority, sql);
                 AuthorityInsert();
             }
@@ -100,7 +100,13 @@ namespace Schcduler
         /// </summary>
         private void MemberDataInsert()
         {
-            string sql ="values(\"00000000000\",\"0000\",\"관리자\",\"8590\",0)";
+            EncryptionManager encryptionManager = new EncryptionManager();
+            LoginData loginData = new LoginData();
+            loginData.Phone = "00000000000";
+            loginData.Password = "0000";
+            string password = encryptionManager.EncryptionPassword(loginData);
+            string sql = "values(\"00000000000\",\"" + password + "\",\"관리자\",\"8590\",0)";
+
             Insert(DataBaseData.TableMember, sql);
         }
 

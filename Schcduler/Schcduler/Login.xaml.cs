@@ -23,6 +23,7 @@ namespace Schcduler
     {
         MemberManager memberManager = new MemberManager();
         WageManger wageMenger = new WageManger();
+        EncryptionManager encryptionManager = new EncryptionManager();
 
         public Login()
         {
@@ -33,14 +34,14 @@ namespace Schcduler
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            if (tbId.Text.Trim().Length < 10 || tbPassword.Text.Trim() == "")
+            if (tbId.Text.Trim().Length < 10 || pbPassword.Password.Trim() == "")
             {
                 return;
             }
 
             LoginData inputLoginData = new LoginData();
             inputLoginData.Phone = tbId.Text.Trim();
-            inputLoginData.Password = tbPassword.Text.Trim();
+            inputLoginData.Password = pbPassword.Password.Trim();
 
             LoginData loginData = new LoginData();
 
@@ -51,7 +52,7 @@ namespace Schcduler
                 MyMessageBox.createMessageBox(1, "핸드폰번호가 없습니다.", "");
                 return;
             }
-            if (!loginData.Password.Equals(inputLoginData.Password))
+            if (!loginData.Password.Equals(encryptionManager.EncryptionPassword(inputLoginData)))
             {
                 MyMessageBox.createMessageBox(1, "비밀번호가 틀렸습니다.", "");
                 return;
@@ -60,7 +61,7 @@ namespace Schcduler
             memberManager.SetMemberData(loginData);
 
             tbId.Clear();
-            tbPassword.Clear();
+            pbPassword.Clear();
 
             TransitionPage.TransitionPages(1);
             TransitionPage.TransitionFrame(0);
@@ -120,7 +121,7 @@ namespace Schcduler
             tbId.Clear();
         }
 
-        private void tbPassword_KeyDown(object sender, KeyEventArgs e)
+        private void pbPassword_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key.Equals(Key.Enter))
             {
@@ -132,7 +133,7 @@ namespace Schcduler
         {
             if (e.Key.Equals(Key.Enter))
             {
-                tbPassword.Focus();
+                pbPassword.Focus();
             }
         }
 

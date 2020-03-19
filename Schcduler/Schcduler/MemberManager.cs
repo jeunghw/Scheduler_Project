@@ -10,6 +10,7 @@ namespace Schcduler
     class MemberManager
     {
         DBConn dBConn = MainWindow.GetDBConn();
+        EncryptionManager encryptionManager = new EncryptionManager();
 
         /// <summary>
         /// 사용자 데이터 검색
@@ -96,7 +97,7 @@ namespace Schcduler
         public int Insert(LoginData loinData)
         {
             int result = -1;
-            string sql = "values(\"" + loinData.Phone + "\",\"" + loinData.Password + "\",\"" + loinData.Name + "\",\"" + loinData.Wage + "\", " + loinData.Authority + ")";
+            string sql = "values(\"" + loinData.Phone + "\",\"" + encryptionManager.EncryptionPassword(loinData) + "\",\"" + loinData.Name + "\",\"" + loinData.Wage + "\", " + loinData.Authority + ")";
 
             dBConn.DBOpen();
             result = dBConn.Insert(DataBaseData.TableMember, sql);
