@@ -111,7 +111,7 @@
     </ApplicationDefinition>
     <Compile Include="AuthorityData.cs" />
     <Compile Include="AuthorityManager.cs" />
-    <Compile Include="DBConn.cs" />
+    <Compile Include="DBManager.cs" />
     <Compile Include="DataBaseData.cs" />
     <Compile Include="EncryptionManager.cs" />
     <Compile Include="MemberManagement.xaml.cs">

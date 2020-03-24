@@ -9,7 +9,7 @@ namespace Schcduler
 {
     class MemberManager
     {
-        DBConn dBConn = MainWindow.GetDBConn();
+        DBManager dBConn = MainWindow.GetDBConn();
         EncryptionManager encryptionManager = new EncryptionManager();
 
         /// <summary>

@@ -9,7 +9,7 @@ namespace Schcduler
 {
     class AuthorityManager
     {
-        DBConn dBConn = MainWindow.GetDBConn();
+        DBManager dBConn = MainWindow.GetDBConn();
 
         public AuthorityData Select()
         {

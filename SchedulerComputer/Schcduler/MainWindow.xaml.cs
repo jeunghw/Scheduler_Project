@@ -20,7 +20,7 @@ namespace Schcduler
     /// </summary>
     public partial class MainWindow : Window
     {
-        static DBConn dBConn = new DBConn();
+        static DBManager dBConn = new DBManager();
 
         public MainWindow()
         {
@@ -31,7 +31,7 @@ namespace Schcduler
         }
 
 
-        public static DBConn GetDBConn()
+        public static DBManager GetDBConn()
         {
             return dBConn;
         }

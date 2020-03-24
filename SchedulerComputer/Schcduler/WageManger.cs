@@ -16,7 +16,7 @@ namespace Schcduler
 {
     class WageManger
     {
-        DBConn dBConn = MainWindow.GetDBConn();
+        DBManager dBConn = MainWindow.GetDBConn();
 
 
         public ScheduleData Select(string tableName, string date)

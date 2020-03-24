@@ -23,7 +23,7 @@ namespace Schcduler
     {
 
         string sql;
-        DBConn dBConn = MainWindow.GetDBConn();
+        DBManager dBConn = MainWindow.GetDBConn();
         LoginData loginData = new LoginData();
         MemberManager memberManager = new MemberManager();
 
