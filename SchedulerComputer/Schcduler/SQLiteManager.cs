@@ -4,13 +4,12 @@ using System.IO;
 
 namespace Schcduler
 {
-    public class DBManager
+    public class SQLiteManager
     {
-        private string Path = Directory.GetCurrentDirectory() + "\\..\\..\\..\\DB";                   //데이터베이스 위치
-        protected SQLiteConnection conn = null;                                                     //SQL커낵션을 위한 객체
+        protected SQLiteConnection connection = null;                                                     //SQL커낵션을 위한 객체
 
 
-        public DBManager()
+        public SQLiteManager()
         {
             DBDirectoryCreate();
             DBInit();
@@ -22,8 +21,8 @@ namespace Schcduler
         {
             try
             {
-                conn = new SQLiteConnection("Data Source=" + Path + "\\" + DataBaseData.DbScheduler);
-                conn.Open();
+                connection = new SQLiteConnection("Data Source=" + SQLiteData.Path + "\\" + SQLiteData.DbScheduler);
+                connection.Open();
             }
             catch (Exception ex)
             {
@@ -37,7 +36,7 @@ namespace Schcduler
         {
             try
             {
-                conn.Close();
+                connection.Close();
             }
             catch(Exception ex)
             {
@@ -51,9 +50,9 @@ namespace Schcduler
         {
             try
             {
-                if (!Directory.Exists(Path))
+                if (!Directory.Exists(SQLiteData.Path))
                 {
-                    Directory.CreateDirectory(Path);
+                    Directory.CreateDirectory(SQLiteData.Path);
                 }
             }
             catch(Exception ex)
@@ -78,17 +77,17 @@ namespace Schcduler
 
             DBOpen();
 
-            if (!CheckTable(DataBaseData.TableMember))
+            if (!CheckTable(SQLiteData.TableMember))
             {
                 sql = "(Phone char(11), Password varchar(50), Name varchar(8), Wage varchar(8), Authority int(2), primary Key(\"Phone\"))";
-                Create(DataBaseData.TableMember, sql);
+                Create(SQLiteData.TableMember, sql);
                 MemberDataInsert();
             }
 
-            if (!CheckTable(DataBaseData.TableAuthority))
+            if (!CheckTable(SQLiteData.TableAuthority))
             { 
                 sql = "(Authority char(2), SignUp char(1), Remove char(1), Modify char(1), Search char(1), primary Key(\"Authority\"))";
-                Create(DataBaseData.TableAuthority, sql);
+                Create(SQLiteData.TableAuthority, sql);
                 AuthorityInsert();
             }
 
@@ -107,7 +106,7 @@ namespace Schcduler
             string password = encryptionManager.EncryptionPassword(loginData);
             string sql = "values(\"00000000000\",\"" + password + "\",\"관리자\",\"8590\",0)";
 
-            Insert(DataBaseData.TableMember, sql);
+            Insert(SQLiteData.TableMember, sql);
         }
 
         /// <summary>
@@ -118,16 +117,16 @@ namespace Schcduler
             string sql = "";
 
             sql = "values(0,0,1,1,1)";
-            Insert(DataBaseData.TableAuthority, sql);
+            Insert(SQLiteData.TableAuthority, sql);
 
             sql = "values(1,0,0,0,0)";
-            Insert(DataBaseData.TableAuthority, sql);
+            Insert(SQLiteData.TableAuthority, sql);
 
             sql = "values(2,0,1,0,0)";
-            Insert(DataBaseData.TableAuthority, sql);
+            Insert(SQLiteData.TableAuthority, sql);
 
             sql = "values(3,1,1,0,0)";
-            Insert(DataBaseData.TableAuthority, sql);
+            Insert(SQLiteData.TableAuthority, sql);
         }
         /// <summary>
         /// 테이블이 있는지 확인
@@ -146,7 +145,7 @@ namespace Schcduler
 
             try
             {
-                command = new SQLiteCommand(sql, conn);
+                command = new SQLiteCommand(sql, this.connection);
                 reader = command.ExecuteReader();
                 reader.Read();
                 if (reader["name"].ToString().Equals(""))
@@ -182,7 +181,7 @@ namespace Schcduler
             {
                 try
                 {
-                    command = new SQLiteCommand(sql, conn);
+                    command = new SQLiteCommand(sql, this.connection);
                     result = command.ExecuteNonQuery();
                 }
                 catch (Exception ex)
@@ -209,7 +208,7 @@ namespace Schcduler
 
             try
             {
-                command = new SQLiteCommand(sql, conn);
+                command = new SQLiteCommand(sql, this.connection);
                 reader = command.ExecuteReader();
 
                 while (reader.Read())
@@ -228,7 +227,7 @@ namespace Schcduler
             {
                 try
                 {
-                    command = new SQLiteCommand(sql, conn);
+                    command = new SQLiteCommand(sql, this.connection);
                     result = command.ExecuteNonQuery();
                 }
                 catch (Exception ex)
@@ -255,7 +254,7 @@ namespace Schcduler
                 try
                 {
                     string sql = "Select * from \"" + tableName + "\" " + inputSql;
-                    command = new SQLiteCommand(sql, conn);
+                    command = new SQLiteCommand(sql, this.connection);
                 }
                 catch (Exception ex)
                 {
@@ -281,7 +280,7 @@ namespace Schcduler
             {
                 try
                 {
-                    command = new SQLiteCommand(sql, conn);
+                    command = new SQLiteCommand(sql, this.connection);
                     result = command.ExecuteNonQuery();
                 }
                 catch (Exception ex)
@@ -308,7 +307,7 @@ namespace Schcduler
             {
                 try
                 {
-                    command = new SQLiteCommand(sql, conn);
+                    command = new SQLiteCommand(sql, this.connection);
                     result = command.ExecuteNonQuery();
                 }
                 catch (Exception ex)
@@ -336,7 +335,7 @@ namespace Schcduler
             {
                 try
                 {
-                    command = new SQLiteCommand(sql, conn);
+                    command = new SQLiteCommand(sql, this.connection);
                     result = command.ExecuteNonQuery();
                 }
                 catch (Exception ex)

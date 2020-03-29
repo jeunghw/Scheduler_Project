@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,8 @@ namespace Schcduler
     {
 
         string sql;
-        DBManager dBConn = MainWindow.GetDBConn();
+        SQLiteManager sqliteManager = MainWindow.GetSqliteManager();
+        MySQLManager mysqlManager = MainWindow.GetMySQLManager();
         LoginData loginData = new LoginData();
         MemberManager memberManager = new MemberManager();
 
@@ -85,15 +87,18 @@ namespace Schcduler
         {
             string sql = "where Phone=\"" + tbPhone2.Text + "\"";
 
-            dBConn.DBOpen();
+            sqliteManager.DBOpen();
 
-            if(MyMessageBox.createMessageBox(2, "이름 : "+cbName.Text+" 핸드폰번호 : "+tbPhone2.Text+" 사용자를 삭제하시겠습니까?", "회원삭제확인")==0)
+            if (MyMessageBox.createMessageBox(2, "이름 : "+cbName.Text+" 핸드폰번호 : "+tbPhone2.Text+" 사용자를 삭제하시겠습니까?", "회원삭제확인")==0)
             {
-                dBConn.Delete(DataBaseData.TableMember, sql);
-                dBConn.Drop(tbPhone2.Text);
+                sqliteManager.Delete(SQLiteData.TableMember, sql);
+                sqliteManager.Drop(tbPhone2.Text);
+
+                Thread thread = new Thread(() => MainWindow.runThread(3, MySQLData.TableMember, sql));
+                thread.Start();
             }
 
-            dBConn.DBClose();
+            sqliteManager.DBClose();
 
             initCBSecession();
         }

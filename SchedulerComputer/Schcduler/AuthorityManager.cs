@@ -9,7 +9,7 @@ namespace Schcduler
 {
     class AuthorityManager
     {
-        DBManager dBConn = MainWindow.GetDBConn();
+        SQLiteManager dBConn = MainWindow.GetSqliteManager();
 
         public AuthorityData Select()
         {
@@ -19,7 +19,7 @@ namespace Schcduler
 
             dBConn.DBOpen();
 
-            command = dBConn.Select(DataBaseData.TableAuthority, sql);
+            command = dBConn.Select(SQLiteData.TableAuthority, sql);
             rdr = command.ExecuteReader();
 
             AuthorityData authorityData = new AuthorityData();

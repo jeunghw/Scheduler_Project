@@ -20,7 +20,8 @@ namespace Schcduler
     /// </summary>
     public partial class MainWindow : Window
     {
-        static DBManager dBConn = new DBManager();
+        static SQLiteManager sqliteManager = new SQLiteManager();
+        static MySQLManager mysqlManager = new MySQLManager();
 
         public MainWindow()
         {
@@ -31,9 +32,48 @@ namespace Schcduler
         }
 
 
-        public static DBManager GetDBConn()
+        public static SQLiteManager GetSqliteManager()
         {
-            return dBConn;
+            return sqliteManager;
+        }
+
+        public static MySQLManager GetMySQLManager()
+        {
+            return mysqlManager;
+        }
+
+        /// <summary>
+        /// 스레드 함수(MySql 쿼리문 실행)
+        /// </summary>
+        /// <param name="number">
+        /// 1: select
+        /// 2: update
+        /// 3: delete
+        /// 4: insert
+        /// </param>
+        /// <param name="tableName">테이블명</param>
+        /// <param name="sql">추가sql</param>
+        public static void runThread(int number, string tableName, string sql)
+        {
+            mysqlManager.DBOpen();
+
+            if (number == 1)
+            {
+                mysqlManager.Select(tableName, sql);
+            }
+            else if (number == 2)
+            {
+                mysqlManager.Update(tableName, sql);
+            }
+            else if (number == 3)
+            {
+                mysqlManager.Delete(tableName, sql);
+            }
+            else
+            {
+                mysqlManager.Insert(tableName, sql);
+            }
+            mysqlManager.DBClose();
         }
     }
 }

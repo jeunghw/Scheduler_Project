@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +17,8 @@ namespace Schcduler
 {
     class WageManger
     {
-        DBManager dBConn = MainWindow.GetDBConn();
+        SQLiteManager sqlliteManager = MainWindow.GetSqliteManager();
+        MySQLManager mysqlManager = MainWindow.GetMySQLManager();
 
 
         public ScheduleData Select(string tableName, string date)
@@ -28,9 +30,9 @@ namespace Schcduler
 
             string year = SplitString(date, '-')[0];
 
-            dBConn.DBOpen();
+            sqlliteManager.DBOpen();
 
-            command = dBConn.Select(tableName+ year, sql);
+            command = sqlliteManager.Select(tableName+ year, sql);
             reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -50,7 +52,7 @@ namespace Schcduler
                 scheduleData.TotalWage = reader["TotalWage"].ToString();
             }
 
-            dBConn.DBClose();
+            sqlliteManager.DBClose();
 
             return scheduleData;
         }
@@ -64,15 +66,18 @@ namespace Schcduler
         {
             int result = -1;
             string sql = "OnTime = \"" + scheduleData.OnTime + "\", OffTime = \"" + scheduleData.OffTime + "\", Time = \"" + scheduleData.Time + "\", RestTime = \"" + scheduleData.RestTime +
-                "\", ExtensionTime = \"" + scheduleData.ExtensionTime + "\", NightTime = \"" + scheduleData.NightTime + "\", TotalTime = \"" + scheduleData.TotalTime + "\", Wage = \"" 
-                + scheduleData.Wage + "\", RestWage = \"" + scheduleData.RestWage + "\", " + "ExtensionWage = \"" + scheduleData.ExtensionWage + "\", NightWage = \"" + scheduleData.NightWage + 
+                "\", ExtensionTime = \"" + scheduleData.ExtensionTime + "\", NightTime = \"" + scheduleData.NightTime + "\", TotalTime = \"" + scheduleData.TotalTime + "\", Wage = \""
+                + scheduleData.Wage + "\", RestWage = \"" + scheduleData.RestWage + "\", " + "ExtensionWage = \"" + scheduleData.ExtensionWage + "\", NightWage = \"" + scheduleData.NightWage +
                 "\", TotalWage = \"" + scheduleData.TotalWage + "\" where Date = \"" + scheduleData.Date + "\"";
 
             string year = SplitString(scheduleData.Date, '-')[0];
 
-            dBConn.DBOpen();
-            dBConn.Update(tableName+ year, sql);
-            dBConn.DBClose();
+            sqlliteManager.DBOpen();
+            result = sqlliteManager.Update(tableName + year, sql);
+            sqlliteManager.DBClose();
+
+            Thread thread = new Thread(() => MainWindow.runThread(2,MySQLData.TableSchedule, sql));
+            thread.Start();
 
             return result;
         }
@@ -91,9 +96,12 @@ namespace Schcduler
 
             string year = SplitString(scheduleData.Date, '-')[0];
 
-            dBConn.DBOpen();
-            dBConn.Insert(tableName+ year, sql);
-            dBConn.DBClose();
+            sqlliteManager.DBOpen();
+            sqlliteManager.Insert(tableName+ year, sql);
+            sqlliteManager.DBClose();
+
+            Thread thread = new Thread(() => MainWindow.runThread(4, tableName, sql));
+            thread.Start();
 
             return result;
         }
@@ -111,9 +119,12 @@ namespace Schcduler
 
             string year = SplitString(scheduleData.Date, '-')[0];
 
-            dBConn.DBOpen();
-            dBConn.Delete(tableName+year, sql);
-            dBConn.DBClose();
+            sqlliteManager.DBOpen();
+            result = sqlliteManager.Delete(tableName+year, sql);
+            sqlliteManager.DBClose();
+
+            Thread thread = new Thread(() => MainWindow.runThread(3, tableName, sql));
+            thread.Start();
 
             return result;
         }
@@ -128,9 +139,12 @@ namespace Schcduler
 
             if (!CheckDate(loginData, DateTime.Now.ToString("yyyy-MM-dd")))
             {
-                dBConn.DBOpen();
-                dBConn.Insert(loginData.Phone+DateTime.Now.ToString("yyyy"), sql);
-                dBConn.DBClose();
+                sqlliteManager.DBOpen();
+                result = sqlliteManager.Insert(loginData.Phone+DateTime.Now.ToString("yyyy"), sql);
+                sqlliteManager.DBClose();
+
+                Thread thread = new Thread(() => MainWindow.runThread(4, MySQLData.TableSchedule, sql));
+                thread.Start();
             }
 
             return result;
@@ -166,9 +180,12 @@ namespace Schcduler
             //출근을 했는지 확인
             if (CheckDate(loginData, date))
             {
-                dBConn.DBOpen();
-                result = dBConn.Update(loginData.Phone+DateTime.Now.ToString("yyyy"), sql);
-                dBConn.DBClose();
+                sqlliteManager.DBOpen();
+                result = sqlliteManager.Update(loginData.Phone+DateTime.Now.ToString("yyyy"), sql);
+                sqlliteManager.DBClose();
+
+                Thread thread = new Thread(() => MainWindow.runThread(2, MySQLData.TableSchedule, sql));
+                thread.Start();
             }
 
 
@@ -193,8 +210,8 @@ namespace Schcduler
 
             string year = SplitString(date, '-')[0];
 
-            dBConn.DBOpen();
-            command = dBConn.Select(loginData.Phone+year, sql);
+            sqlliteManager.DBOpen();
+            command = sqlliteManager.Select(loginData.Phone+year, sql);
 
             if (command != null)
             {
@@ -217,7 +234,7 @@ namespace Schcduler
                     Console.WriteLine("날짜체크실패 : " + ex.Message);
                 }
             }
-            dBConn.DBClose();
+            sqlliteManager.DBClose();
             
             return result;
         }
@@ -229,14 +246,14 @@ namespace Schcduler
             string sql = "where Phone=\"" + phone + "\"";
             int result = 0;
 
-            dBConn.DBOpen();
+            sqlliteManager.DBOpen();
 
-            command = dBConn.Select(DataBaseData.TableMember, sql);
+            command = sqlliteManager.Select(SQLiteData.TableMember, sql);
             reader = command.ExecuteReader();
 
             result = Convert.ToInt32(reader["Wage"]);
 
-            dBConn.DBClose();
+            sqlliteManager.DBClose();
 
             return result;
         }
@@ -308,7 +325,14 @@ namespace Schcduler
                     }
                     scheduleData.Time = Time + ":" + Minute.ToString().PadLeft(2, '0');
 
-                    Time = OffTime - 22;
+                    if (OnTime <= 22)
+                    {
+                        Time = OffTime - 22;
+                    }
+                    else
+                    {
+                        Time = OffTime - OnTime;
+                    }
                     Minute = OffMinute;
                     scheduleData.NightTime = Time + ":" + Minute.ToString().PadLeft(2, '0');
                 }
@@ -519,10 +543,10 @@ namespace Schcduler
                 
             }
 
-            dBConn.DBOpen();
+            sqlliteManager.DBOpen();
 
             //DB에 핸드폰 번호와 sql 전달, 핸드폰 번호는 DB의 테이블명
-            command = dBConn.Select(phone+yaer, sql);
+            command = sqlliteManager.Select(phone+yaer, sql);
             adapter = new SQLiteDataAdapter(command);
             adapter.Fill(dataSet);
             dataTable = dataSet.Tables[0];
@@ -553,7 +577,7 @@ namespace Schcduler
                 Console.WriteLine("MappingDataTable : " + e.Message);
             }
 
-            dBConn.DBClose();
+            sqlliteManager.DBClose();
 
             return dataTable;
         }

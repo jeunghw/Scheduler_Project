@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Schcduler
 {
     class MemberManager
     {
-        DBManager dBConn = MainWindow.GetDBConn();
+        SQLiteManager sqliteManager = MainWindow.GetSqliteManager();
+        MySQLManager mysqlManager = MainWindow.GetMySQLManager();
         EncryptionManager encryptionManager = new EncryptionManager();
 
         /// <summary>
@@ -26,9 +28,9 @@ namespace Schcduler
 
             sql = "where Phone=\"" + loginData.Phone + "\"";
 
-            dBConn.DBOpen();
+            sqliteManager.DBOpen();
 
-            command = dBConn.Select(DataBaseData.TableMember, sql);
+            command = sqliteManager.Select(SQLiteData.TableMember, sql);
             rdr = command.ExecuteReader();
 
             while (rdr.Read())
@@ -37,7 +39,7 @@ namespace Schcduler
                 login.Password = rdr["Password"].ToString();
             }
 
-            dBConn.DBClose();
+            sqliteManager.DBClose();
 
             return login;
         }
@@ -48,9 +50,9 @@ namespace Schcduler
             SQLiteDataReader reader;
             List<LoginData> loginDataList = new List<LoginData>();
 
-            dBConn.DBOpen();
+            sqliteManager.DBOpen();
 
-            command = dBConn.Select(DataBaseData.TableMember, "");
+            command = sqliteManager.Select(SQLiteData.TableMember, "");
             reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -66,7 +68,7 @@ namespace Schcduler
                 }
             }
 
-            dBConn.DBClose();
+            sqliteManager.DBClose();
 
             return loginDataList;
         }
@@ -83,9 +85,9 @@ namespace Schcduler
             //년도가 뀌어서 테이블 생성시 ID가 있는지 확인해서 있으면 테이블 생성
             if (!Select(loingData).Phone.Equals(""))
             {
-                dBConn.DBOpen();
-                dBConn.Create(loingData.Phone + DateTime.Now.ToString("yyyy"), sql); ;
-                dBConn.DBClose();
+                sqliteManager.DBOpen();
+                sqliteManager.Create(loingData.Phone + DateTime.Now.ToString("yyyy"), sql); ;
+                sqliteManager.DBClose();
             }
         }
 
@@ -99,9 +101,13 @@ namespace Schcduler
             int result = -1;
             string sql = "values(\"" + loinData.Phone + "\",\"" + encryptionManager.EncryptionPassword(loinData) + "\",\"" + loinData.Name + "\",\"" + loinData.Wage + "\", " + loinData.Authority + ")";
 
-            dBConn.DBOpen();
-            result = dBConn.Insert(DataBaseData.TableMember, sql);
-            dBConn.DBClose();
+            sqliteManager.DBOpen();
+            result = sqliteManager.Insert(SQLiteData.TableMember, sql);
+            sqliteManager.DBClose();
+
+
+            Thread thread = new Thread(() => MainWindow.runThread(4, MySQLData.TableMember, sql));
+            thread.Start();
 
             return result;
         }
@@ -117,9 +123,9 @@ namespace Schcduler
             AuthorityManager authorityManager = new AuthorityManager();
             string sql = "where Phone=\"" + loginData.Phone + "\"";
 
-            dBConn.DBOpen();
+            sqliteManager.DBOpen();
 
-            command = dBConn.Select(DataBaseData.TableMember, sql);
+            command = sqliteManager.Select(SQLiteData.TableMember, sql);
             rdr = command.ExecuteReader();
 
             while (rdr.Read())
@@ -131,7 +137,7 @@ namespace Schcduler
                 MemberData.GetMemberData.AuthorityData.Authority = Convert.ToInt32(rdr["Authority"]);
             }
 
-            dBConn.DBClose();
+            sqliteManager.DBClose();
 
             MemberData.GetMemberData.AuthorityData = authorityManager.Select();
 

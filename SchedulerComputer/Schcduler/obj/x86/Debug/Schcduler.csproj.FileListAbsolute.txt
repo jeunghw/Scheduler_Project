@@ -46,3 +46,11 @@ C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\obj\x
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\obj\x86\Debug\Schcduler.csproj.CopyComplete
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\obj\x86\Debug\Schcduler.exe
 C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\obj\x86\Debug\Schcduler.pdb
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\bin\x86\Debug\BouncyCastle.Crypto.dll
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\bin\x86\Debug\Google.Protobuf.dll
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\bin\x86\Debug\MySql.Data.dll
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\bin\x86\Debug\Renci.SshNet.dll
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\bin\x86\Debug\Ubiety.Dns.Core.dll
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\bin\x86\Debug\Google.Protobuf.xml
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\bin\x86\Debug\MySql.Data.xml
+C:\Users\Jeunghw\Desktop\Git\Scheduler_Project\SchedulerComputer\Schcduler\bin\x86\Debug\Renci.SshNet.xml
