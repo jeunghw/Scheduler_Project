@@ -34,6 +34,7 @@ namespace Schcduler
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
+
             if (tbId.Text.Trim().Length < 10 || pbPassword.Password.Trim() == "")
             {
                 return;

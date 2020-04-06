@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +23,7 @@ namespace Schcduler
     {
         static SQLiteManager sqliteManager = new SQLiteManager();
         static MySQLManager mysqlManager = new MySQLManager();
+        private static object lockObject = new object();
 
         public MainWindow()
         {
@@ -55,25 +57,34 @@ namespace Schcduler
         /// <param name="sql">추가sql</param>
         public static void runThread(int number, string tableName, string sql)
         {
-            mysqlManager.DBOpen();
+            Monitor.Enter(lockObject);
+            try
+            {
 
-            if (number == 1)
-            {
-                mysqlManager.Select(tableName, sql);
+                mysqlManager.DBOpen();
+
+                if (number == 1)
+                {
+                    mysqlManager.Select(tableName, sql);
+                }
+                else if (number == 2)
+                {
+                    mysqlManager.Update(tableName, sql);
+                }
+                else if (number == 3)
+                {
+                    mysqlManager.Delete(tableName, sql);
+                }
+                else
+                {
+                    mysqlManager.Insert(tableName, sql);
+                }
+                mysqlManager.DBClose();
             }
-            else if (number == 2)
+            finally
             {
-                mysqlManager.Update(tableName, sql);
+                Monitor.Exit(lockObject);
             }
-            else if (number == 3)
-            {
-                mysqlManager.Delete(tableName, sql);
-            }
-            else
-            {
-                mysqlManager.Insert(tableName, sql);
-            }
-            mysqlManager.DBClose();
         }
     }
 }

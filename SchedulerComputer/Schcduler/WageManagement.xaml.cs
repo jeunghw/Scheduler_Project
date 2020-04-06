@@ -99,7 +99,7 @@ namespace Schcduler
             }
 
             wageMenger.SaveDataTable(dataTable);
-
+            btnAddRow.IsEnabled = true;
             Search_Click(this, null);
         }
 
@@ -140,14 +140,21 @@ namespace Schcduler
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
+            if(DGSchedule.SelectedIndex < 0)
+            {
+                DGSchedule.SelectedIndex = 0;
+            }
             if (DGSchedule.SelectedIndex == (dataTable.Rows.Count - 1))
             {
                 return;
             }
+            btnAddRow.IsEnabled = false;
 
             wageMenger.DeleteDataTableRow(dataTable, DGSchedule.SelectedIndex);
 
             wageMenger.DeleteDataTable(dataTable);
+
+            Save_Click(this,null);
         }
     }
 }

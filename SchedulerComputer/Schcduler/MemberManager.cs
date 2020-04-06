@@ -105,7 +105,7 @@ namespace Schcduler
             result = sqliteManager.Insert(SQLiteData.TableMember, sql);
             sqliteManager.DBClose();
 
-
+            sql = "values(\"" + loinData.Phone + "\",\"" + loinData.Password + "\",\"" + loinData.Name + "\",\"" + loinData.Wage + "\", " + loinData.Authority + ")";
             Thread thread = new Thread(() => MainWindow.runThread(4, MySQLData.TableMember, sql));
             thread.Start();
 

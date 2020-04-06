@@ -59,10 +59,10 @@ namespace Schcduler
         /// <summary>
         /// 스케줄 테이터 Update
         /// </summary>
-        /// <param name="tableName">입력할 테이블이름</param>
+        /// <param name="phone">입력할 테이블이름</param>
         /// <param name="scheduleData">입력할 데이터 구조체</param>
         /// <returns>영양받은 행수</returns>
-        public int Update(string tableName, ScheduleData scheduleData)
+        public int Update(string phone, ScheduleData scheduleData)
         {
             int result = -1;
             string sql = "OnTime = \"" + scheduleData.OnTime + "\", OffTime = \"" + scheduleData.OffTime + "\", Time = \"" + scheduleData.Time + "\", RestTime = \"" + scheduleData.RestTime +
@@ -73,8 +73,13 @@ namespace Schcduler
             string year = SplitString(scheduleData.Date, '-')[0];
 
             sqlliteManager.DBOpen();
-            result = sqlliteManager.Update(tableName + year, sql);
+            result = sqlliteManager.Update(phone + year, sql);
             sqlliteManager.DBClose();
+
+            sql = "OnTime = \"" + scheduleData.OnTime + "\", OffTime = \"" + scheduleData.OffTime + "\", Time = \"" + scheduleData.Time + "\", RestTime = \"" + scheduleData.RestTime +
+               "\", ExtensionTime = \"" + scheduleData.ExtensionTime + "\", NightTime = \"" + scheduleData.NightTime + "\", TotalTime = \"" + scheduleData.TotalTime + "\", Wage = \""
+               + scheduleData.Wage + "\", RestWage = \"" + scheduleData.RestWage + "\", " + "ExtensionWage = \"" + scheduleData.ExtensionWage + "\", NightWage = \"" + scheduleData.NightWage +
+               "\", TotalWage = \"" + scheduleData.TotalWage + "\" where Date = \"" + scheduleData.Date + "\" and Phone=\""+ phone +"\"";
 
             Thread thread = new Thread(() => MainWindow.runThread(2,MySQLData.TableSchedule, sql));
             thread.Start();
@@ -84,10 +89,10 @@ namespace Schcduler
         /// <summary>
         /// 스케줄 데이터 Insert
         /// </summary>
-        /// <param name="tableName">입력할 테이블이름</param>
+        /// <param name="phone">핸드폰번호</param>
         /// <param name="scheduleData">입력할 데이터 구조체</param>
         /// <returns>영양받은 행수</returns>
-        public int Insert(string tableName, ScheduleData scheduleData)
+        public int Insert(string phone, ScheduleData scheduleData)
         {
             int result = -1;
             string sql = "values(\"" +scheduleData.Date+ "\", \"" + scheduleData.OnTime + "\", \"" + scheduleData.OffTime + "\", \"" + scheduleData.Time + "\", \"" + scheduleData.RestTime + "\", \""
@@ -97,10 +102,14 @@ namespace Schcduler
             string year = SplitString(scheduleData.Date, '-')[0];
 
             sqlliteManager.DBOpen();
-            sqlliteManager.Insert(tableName+ year, sql);
+            sqlliteManager.Insert(phone+ year, sql);
             sqlliteManager.DBClose();
 
-            Thread thread = new Thread(() => MainWindow.runThread(4, tableName, sql));
+            sql = "values(\"" + phone + "\", \"" + scheduleData.Date + "\", \"" + scheduleData.OnTime + "\", \"" + scheduleData.OffTime + "\", \"" + scheduleData.Time + "\", \"" + scheduleData.RestTime + "\", \""
+                + scheduleData.ExtensionTime + "\", \"" + scheduleData.NightTime + "\", \"" + scheduleData.TotalTime + "\", \"" + scheduleData.Wage + "\", \"" + scheduleData.RestWage +
+                "\", \"" + scheduleData.ExtensionWage + "\", \"" + scheduleData.NightWage + "\", \"" + scheduleData.TotalWage + "\")";
+
+            Thread thread = new Thread(() => MainWindow.runThread(4, MySQLData.TableSchedule, sql));
             thread.Start();
 
             return result;
@@ -109,10 +118,10 @@ namespace Schcduler
         /// <summary>
         /// 스케줄 데이터 Delete
         /// </summary>
-        /// <param name="tableName">테이블이름</param>
+        /// <param name="phone">핸드폰번호</param>
         /// <param name="scheduleData">지울 데이터 구조체</param>
         /// <returns>영양받은 행수</returns>
-        public int Delete(string tableName, ScheduleData scheduleData)
+        public int Delete(string phone, ScheduleData scheduleData)
         {
             int result = -1;
             string sql = "where Date=\"" + scheduleData.Date + "\"";
@@ -120,10 +129,12 @@ namespace Schcduler
             string year = SplitString(scheduleData.Date, '-')[0];
 
             sqlliteManager.DBOpen();
-            result = sqlliteManager.Delete(tableName+year, sql);
+            result = sqlliteManager.Delete(phone+year, sql);
             sqlliteManager.DBClose();
 
-            Thread thread = new Thread(() => MainWindow.runThread(3, tableName, sql));
+            sql = "where Date=\"" + scheduleData.Date + "\" and Phone=\"" + phone + "\"";
+
+            Thread thread = new Thread(() => MainWindow.runThread(3, MySQLData.TableSchedule, sql));
             thread.Start();
 
             return result;
@@ -142,6 +153,8 @@ namespace Schcduler
                 sqlliteManager.DBOpen();
                 result = sqlliteManager.Insert(loginData.Phone+DateTime.Now.ToString("yyyy"), sql);
                 sqlliteManager.DBClose();
+
+                sql = "(Phone, Date, OnTime) values(\"" + loginData.Phone + "\",\"" + DateTime.Now.ToString("yyyy-MM-dd") + "\",\"" + DateTime.Now.ToString("HH:mm") + "\")";
 
                 Thread thread = new Thread(() => MainWindow.runThread(4, MySQLData.TableSchedule, sql));
                 thread.Start();
@@ -183,6 +196,8 @@ namespace Schcduler
                 sqlliteManager.DBOpen();
                 result = sqlliteManager.Update(loginData.Phone+DateTime.Now.ToString("yyyy"), sql);
                 sqlliteManager.DBClose();
+
+                sql = "OffTime =\"" + time + "\" where Date=\"" + date + "\" and Phone=\""+loginData.Phone+"\"";
 
                 Thread thread = new Thread(() => MainWindow.runThread(2, MySQLData.TableSchedule, sql));
                 thread.Start();
@@ -603,7 +618,7 @@ namespace Schcduler
         }
 
         /// <summary>
-        /// 데이터 테이블의 행 제거
+        /// 데이터 테이블의 행 데이터 제거
         /// </summary>
         public void DeleteDataTableRow(DataTable dataTable, int index)
         {
@@ -787,7 +802,7 @@ namespace Schcduler
         }
 
         /// <summary>
-        /// 제거된 데이터 추출
+        /// 데이터베이스에서 데이터 삭제
         /// </summary>
         /// <param name="dataTable">변경된 데이터테이블</param>
         public void DeleteDataTable(DataTable dataTable)
