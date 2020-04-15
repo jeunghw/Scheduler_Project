@@ -15,6 +15,7 @@ namespace Schcduler
             Name = "";
             Wage = "";
             Authority = -1;
+            Task = -1;
         }
 
         /// <summary>
@@ -41,5 +42,12 @@ namespace Schcduler
         /// 3 : 일반직원
         /// </summary>
         public int Authority { get; set; }
+        /// <summary>
+        /// 직무
+        /// 0 : 무관
+        /// 1 : 홀
+        /// 2 : 주방
+        /// </summary>
+        public int Task { get; set; }
     }
 }

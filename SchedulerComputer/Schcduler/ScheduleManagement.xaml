@@ -1,0 +1,272 @@
+﻿<Page x:Class="Schcduler.ScheduleManagement"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Schcduler"
+      xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+      xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ScheduleManagement" Background="Lavender" Loaded="Page_Loaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Name="info" Grid.Row="0">
+            <Grid HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox Name="cbTask" Text="직무" Width="50" Grid.Column="0" SelectionChanged="cbTask_SelectionChanged"/>
+                <ComboBox Name="cbName" Text="이름" Width="80" Grid.Column="1"/>
+                <ComboBox Name="cbyear" Width="80" Grid.Column="2"/>
+                <ComboBox Name="cbmonth" Width="50" Grid.Column="3"/>
+                <ComboBox Name="cbDay1" Width="50" Grid.Column="4" IsEnabled="False"/>
+                <TextBox Text="~" Grid.Column="5"/>
+                <ComboBox Name="cbDay2" Width="50" Grid.Column="6" IsEnabled="False"/>
+                <Button x:Name="Search" Width="40" Content="검색" Grid.Column="7" Click="Search_Click"/>
+                <Button x:Name="Save" Width="40" Content="저장" Grid.Column="8" Click="Save_Click"/>
+            </Grid>
+            <Grid HorizontalAlignment="Right">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="btnExcel" Content="엑셀변환" Click="btnExcel_Click" Grid.Column="1"/>
+            </Grid>
+        </Grid>
+        <DataGrid Name="DGSchedule" ItemsSource="{Binding}" Grid.Row="1" FontSize="15" AutoGenerateColumns="False" 
+                  AreRowDetailsFrozen="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
+                  CanUserSortColumns="False" ClipToBounds="True" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="직원이름" Binding="{Binding Path=Name}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="핸드폰번호" Binding="{Binding Path=Phone}" IsReadOnly="True"/>
+                
+                
+                
+                <!-- 해당 부분부터 기능 테스트
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="tbMonDate" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" />
+                            <TextBlock Text="출근" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" />
+                            <TextBlock Text="퇴근" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" />
+                        </Grid>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding Path=MonOnTime}" BorderThickness="0,0,1,0" />
+                                <TextBox Grid.Column="1" Text="{Binding Path=MonOffTime}" BorderThickness="1,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="tbTueDate" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" />
+                            <TextBlock Text="출근" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" />
+                            <TextBlock Text="퇴근" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" />
+                        </Grid>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding Path=TueOnTime}" BorderThickness="0,0,1,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding Path=TueOffTime}" BorderThickness="1,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="tbWedDate" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" />
+                            <TextBlock Text="출근" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" />
+                            <TextBlock Text="퇴근" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" />
+                        </Grid>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding Path=WedOnTime}" BorderThickness="0,0,1,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding Path=WedOffTime}" BorderThickness="1,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="tbThuDate" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" />
+                            <TextBlock Text="출근" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" />
+                            <TextBlock Text="퇴근" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" />
+                        </Grid>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding Path=ThuOnTime}" BorderThickness="0,0,1,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding Path=ThuOffTime}" BorderThickness="1,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="tbFriDate" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" />
+                            <TextBlock Text="출근" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" />
+                            <TextBlock Text="퇴근" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" />
+                        </Grid>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding Path=FriOnTime}" BorderThickness="0,0,1,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding Path=FriOffTime}" BorderThickness="1,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="tbSatDate" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" />
+                            <TextBlock Text="출근" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" />
+                            <TextBlock Text="퇴근" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" />
+                        </Grid>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding Path=SatOnTime}" BorderThickness="0,0,1,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding Path=SatOffTime}" BorderThickness="1,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="tbSunDate" Grid.ColumnSpan="2" Grid.Row="0" HorizontalAlignment="Center" />
+                            <TextBlock Text="출근" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" />
+                            <TextBlock Text="퇴근" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" />
+                        </Grid>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding Path=SunOnTime}" BorderThickness="0,0,1,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding Path=SunOffTime}" BorderThickness="1,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                여기까지 기능테스트 실패(데이터를 보여주는 바인딩은 이루어지지만 DataTable과 연동이 안됌 -->
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

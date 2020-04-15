@@ -79,16 +79,22 @@ namespace Schcduler
 
             if (!CheckTable(SQLiteData.TableMember))
             {
-                sql = "(Phone char(11), Password varchar(50), Name varchar(8), Wage varchar(8), Authority int(2), primary Key(\"Phone\"))";
+                sql = "(Phone char(11), Password varchar(50), Name varchar(8), Wage varchar(8), Authority int(2), Task int(1), primary Key(\"Phone\"))";
                 Create(SQLiteData.TableMember, sql);
                 MemberDataInsert();
             }
 
             if (!CheckTable(SQLiteData.TableAuthority))
             { 
-                sql = "(Authority char(2), SignUp char(1), Remove char(1), Modify char(1), Search char(1), primary Key(\"Authority\"))";
+                sql = "(Authority char(2), SignUp char(1), Remove char(1), Modify char(1), Search char(1), Schedule char(1), primary Key(\"Authority\"))";
                 Create(SQLiteData.TableAuthority, sql);
                 AuthorityInsert();
+            }
+
+            if (!CheckTable(SQLiteData.TableSchedule))
+            {
+                sql = "(Date char(10), Phone char(11), OnTime char(5), OffTime char(5), primary Key(\"Date\", \"Phone\"))";
+                Create(SQLiteData.TableSchedule, sql);
             }
 
             DBClose();
@@ -104,7 +110,7 @@ namespace Schcduler
             loginData.Phone = "00000000000";
             loginData.Password = "0000";
             string password = encryptionManager.EncryptionPassword(loginData);
-            string sql = "values(\"00000000000\",\"" + password + "\",\"관리자\",\"8590\",0)";
+            string sql = "values(\"00000000000\",\"" + password + "\",\"관리자\",\"8590\",0, 0)";
 
             Insert(SQLiteData.TableMember, sql);
         }
@@ -116,16 +122,16 @@ namespace Schcduler
         {
             string sql = "";
 
-            sql = "values(0,0,1,1,1)";
+            sql = "values(0,0,1,1,1,1)";
             Insert(SQLiteData.TableAuthority, sql);
 
-            sql = "values(1,0,0,0,0)";
+            sql = "values(1,0,0,0,0,0)";
             Insert(SQLiteData.TableAuthority, sql);
 
-            sql = "values(2,0,1,0,0)";
+            sql = "values(2,0,1,0,0,0)";
             Insert(SQLiteData.TableAuthority, sql);
 
-            sql = "values(3,1,1,0,0)";
+            sql = "values(3,1,1,0,0,0)";
             Insert(SQLiteData.TableAuthority, sql);
         }
         /// <summary>

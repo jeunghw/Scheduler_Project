@@ -52,7 +52,7 @@ namespace Schcduler
 
             sqliteManager.DBOpen();
 
-            command = sqliteManager.Select(SQLiteData.TableMember, "");
+            command = sqliteManager.Select(SQLiteData.TableMember, "order by Name");
             reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -61,6 +61,7 @@ namespace Schcduler
 
                 loginData.Phone = reader["Phone"].ToString();
                 loginData.Name = reader["Name"].ToString();
+                loginData.Task = Convert.ToInt32(reader["Task"]);
 
                 if (!loginData.Phone.Equals("00000000000"))
                 {
@@ -82,7 +83,7 @@ namespace Schcduler
             string sql = "(Date char(10), OnTime char(5), OffTime char(5), Time char(5), RestTime char(5), ExtensionTime char(5), NightTime char(5), " +
                 "TotalTime char(5), Wage varchar(6), RestWage varchar(6), ExtensionWage varchar(6), NightWage varchar(6), TotalWage varchar(6), primary key(\"date\"))";
 
-            //년도가 뀌어서 테이블 생성시 ID가 있는지 확인해서 있으면 테이블 생성
+            //년도가 바뀌어서 테이블 생성시 ID가 있는지 확인해서 있으면 테이블 생성
             if (!Select(loingData).Phone.Equals(""))
             {
                 sqliteManager.DBOpen();
@@ -99,13 +100,13 @@ namespace Schcduler
         public int Insert(LoginData loinData)
         {
             int result = -1;
-            string sql = "values(\"" + loinData.Phone + "\",\"" + encryptionManager.EncryptionPassword(loinData) + "\",\"" + loinData.Name + "\",\"" + loinData.Wage + "\", " + loinData.Authority + ")";
+            string sql = "values(\"" + loinData.Phone + "\",\"" + encryptionManager.EncryptionPassword(loinData) + "\",\"" + loinData.Name + "\",\"" + loinData.Wage + "\", " + loinData.Authority + ", " + loinData.Task + ")";
 
             sqliteManager.DBOpen();
             result = sqliteManager.Insert(SQLiteData.TableMember, sql);
             sqliteManager.DBClose();
 
-            sql = "values(\"" + loinData.Phone + "\",\"" + loinData.Password + "\",\"" + loinData.Name + "\",\"" + loinData.Wage + "\", " + loinData.Authority + ")";
+            sql = "values(\"" + loinData.Phone + "\",\"" + loinData.Password + "\",\"" + loinData.Name + "\",\"" + loinData.Wage + "\", " + loinData.Authority + ", " + loinData.Task + ")";
             Thread thread = new Thread(() => MainWindow.runThread(4, MySQLData.TableMember, sql));
             thread.Start();
 
@@ -135,6 +136,7 @@ namespace Schcduler
                 MemberData.GetMemberData.Name = rdr["Name"].ToString();
                 MemberData.GetMemberData.Wage = rdr["Wage"].ToString();
                 MemberData.GetMemberData.AuthorityData.Authority = Convert.ToInt32(rdr["Authority"]);
+                MemberData.GetMemberData.Task = Convert.ToInt32(rdr["Task"]);
             }
 
             sqliteManager.DBClose();

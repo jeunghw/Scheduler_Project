@@ -75,7 +75,7 @@ namespace Schcduler
                 {
                     mysqlManager.Delete(tableName, sql);
                 }
-                else
+                else if(number == 4)
                 {
                     mysqlManager.Insert(tableName, sql);
                 }

@@ -16,6 +16,7 @@ namespace Schcduler
             Name = "";
             Wage = "";
             AuthorityData = new AuthorityData();
+            Task = -1;
         }
         public string Phone { get; set; }
         public string Password { get; set; }
@@ -31,6 +32,10 @@ namespace Schcduler
         /// 권한
         /// </summary>
         public AuthorityData AuthorityData { get; set; }
+        /// <summary>
+        /// 직무
+        /// </summary>
+        public int Task { get; set; }
 
         public static MemberData GetMemberData { get => memberData; }
     }

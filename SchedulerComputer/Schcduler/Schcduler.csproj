@@ -119,12 +119,10 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Ubiety.Dns.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.8.0.19\lib\net452\Ubiety.Dns.Core.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -133,8 +131,15 @@
     </ApplicationDefinition>
     <Compile Include="AuthorityData.cs" />
     <Compile Include="AuthorityManager.cs" />
+    <Compile Include="CommData.cs" />
+    <Compile Include="DateWeek.cs" />
     <Compile Include="MySQLData.cs" />
     <Compile Include="MySQLManager.cs" />
+    <Compile Include="ScheduleData.cs" />
+    <Compile Include="ScheduleManagement.xaml.cs">
+      <DependentUpon>ScheduleManagement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleManager.cs" />
     <Compile Include="SQLiteManager.cs" />
     <Compile Include="SQLiteData.cs" />
     <Compile Include="EncryptionManager.cs" />
@@ -151,7 +156,7 @@
     <Compile Include="MemberData.cs" />
     <Compile Include="MemberManager.cs" />
     <Compile Include="MyMessageBox.cs" />
-    <Compile Include="ScheduleData.cs" />
+    <Compile Include="WageData.cs" />
     <Compile Include="TransitionPage.cs" />
     <Compile Include="WageManagement.xaml.cs">
       <DependentUpon>WageManagement.xaml</DependentUpon>
@@ -178,6 +183,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ScheduleManagement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -219,6 +228,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

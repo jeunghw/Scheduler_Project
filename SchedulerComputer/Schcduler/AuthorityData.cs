@@ -14,6 +14,7 @@ namespace Schcduler
             Modify = -1;
             Search = -1;
             Remove = -1;
+            Schedule = -1;
         }
         /// <summary>
         /// 권한
@@ -43,5 +44,9 @@ namespace Schcduler
         /// 프로그램관리자, 관리자
         /// </summary>
         public int Remove { get; set; }
+        /// <summary>
+        /// 근무관리 권한
+        /// </summary>
+        public int Schedule { get; set; }
     }
 }

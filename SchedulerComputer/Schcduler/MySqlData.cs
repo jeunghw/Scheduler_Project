@@ -11,7 +11,7 @@ namespace Schcduler
         /// <summary>
         /// MySql 서버 IP
         /// </summary>
-        public static string ServerIP = "3.21.102.163";
+        public static string ServerIP = "15.164.228.119";
         /// <summary>
         /// MySql 데이터베이스 이름
         /// </summary>
@@ -35,13 +35,14 @@ namespace Schcduler
         /// <summary>
         /// 출퇴근시간테이블이름
         /// </summary>
-        public static string TableSchedule = "Schedule";
+        public static string TableWage = "Wage";
         /// <summary>
         /// 셋팅관련테이블이름
         /// </summary>
         public static string TableAuthority = "Authority";
         /// <summary>
-        /// SQLite 파일 위치
+        /// 근무관리테이블 이름
         /// </summary>
+        public static string TableSchedule = "Schedule";
     }
 }

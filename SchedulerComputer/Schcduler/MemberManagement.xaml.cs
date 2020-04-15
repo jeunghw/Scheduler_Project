@@ -20,16 +20,9 @@ namespace Schcduler
     /// <summary>
     /// Join.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class Join : Page
+    public partial class MemberManagement : Page
     {
-
-        string sql;
-        SQLiteManager sqliteManager = MainWindow.GetSqliteManager();
-        MySQLManager mysqlManager = MainWindow.GetMySQLManager();
-        LoginData loginData = new LoginData();
-        MemberManager memberManager = new MemberManager();
-
-        public Join()
+        public MemberManagement()
         {
             InitializeComponent();
         }
@@ -38,6 +31,7 @@ namespace Schcduler
         {
             InitCBJoin();
             initCBSecession();
+            InitCBTask();
 
             if (MemberData.GetMemberData.AuthorityData.Authority == 1)
             {
@@ -51,6 +45,9 @@ namespace Schcduler
 
         private void btnJoin_Click(object sender, RoutedEventArgs e)
         {
+            MemberManager memberManager = new MemberManager();
+            LoginData loginData = new LoginData();
+
             if (txtPhone.Text.Trim().Length < 10 || txtPassword.Text.Trim().Equals("") || txtName.Text.Trim().Equals("") || tbWage.Text.Trim().Equals(""))
             {
                 return;
@@ -60,7 +57,8 @@ namespace Schcduler
             loginData.Password = txtPassword.Text.Trim();
             loginData.Name = txtName.Text.Trim();
             loginData.Wage = tbWage.Text.Trim();
-            loginData.Authority = cbAuthority.SelectedIndex+1; 
+            loginData.Authority = cbAuthority.SelectedIndex+1;
+            loginData.Task = cbTask.SelectedIndex;
 
             if (loginData.Phone.Equals(memberManager.Select(loginData).Phone))
             {
@@ -76,7 +74,7 @@ namespace Schcduler
             txtPhone.Clear();
             tbWage.Clear();
 
-            TransitionPage.pgMain.InitComboBox();
+            TransitionPage.wageManagement.InitNameComboBox();
             initCBSecession();
 
             MessageBox.Show("가입이 완료되었습니다.");
@@ -85,6 +83,8 @@ namespace Schcduler
 
         private void btnSecession_Click(object sender, RoutedEventArgs e)
         {
+            SQLiteManager sqliteManager = MainWindow.GetSqliteManager();
+
             string sql = "where Phone=\"" + tbPhone2.Text + "\"";
 
             sqliteManager.DBOpen();
@@ -99,6 +99,11 @@ namespace Schcduler
             }
 
             sqliteManager.DBClose();
+
+            if(MemberData.GetMemberData.Phone == tbPhone2.Text)
+            {
+                TransitionPage.TransitionPages(0);
+            }
 
             initCBSecession();
         }
@@ -160,7 +165,7 @@ namespace Schcduler
         }
 
         /// <summary>
-        /// 콤보박스 초기화
+        /// 직급콤보박스초기화
         /// </summary>
         private void InitCBJoin()
         {
@@ -180,13 +185,35 @@ namespace Schcduler
 
         }
 
-        List<LoginData> loginDataList= new List<LoginData>();
+        /// <summary>
+        /// 분류콤보박스 초기화
+        /// </summary>
+        private void InitCBTask()
+        {
+            List<ComboBoxItem> TaskItems = new List<ComboBoxItem>();
+
+            string[] Authority = { "무관", "홀", "주방" };
+
+            for (int i = 0; i < Authority.Length; i++)
+            {
+                ComboBoxItem item = new ComboBoxItem();
+                item.Content = Authority[i];
+                TaskItems.Add(item);
+            }
+
+            cbTask.ItemsSource = TaskItems;
+            cbTask.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// 삭제관련 이름 콤보박스 초기화
+        /// </summary>
         private void initCBSecession()
         {
-            MemberManager memberManager = new MemberManager();
+            CommData commData = CommData.GetCommData();
+            List<LoginData> loginDataList = commData.getLoginDataList();
             List<ComboBoxItem> NameItems = new List<ComboBoxItem>();
-
-            loginDataList = memberManager.SelectName();
+            commData.setLoginDataList();
 
             foreach (LoginData data in loginDataList)
             {
@@ -200,8 +227,12 @@ namespace Schcduler
 
         }
 
+        //콤보박스 아이템 선택변환시
         private void cbName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            CommData commData = CommData.GetCommData();
+            List<LoginData> loginDataList = commData.getLoginDataList();
+
             if (cbName.SelectedIndex == -1)
             {
                 tbPhone2.Text = loginDataList[0].Phone;

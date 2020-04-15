@@ -104,9 +104,8 @@ namespace Schcduler
 
             loginData.Phone = tbId.Text.Trim();
 
-            Button btn = sender as Button;
-
-            wageMenger.OffWork(loginData);
+            if (wageMenger.OffWork(loginData) == -1)
+                return;
 
             string[] swapTime = time.Split(':');
             string[] swapDate = date.Split('-');

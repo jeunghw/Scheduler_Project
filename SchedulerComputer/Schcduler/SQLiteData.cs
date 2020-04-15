@@ -18,13 +18,17 @@ namespace Schcduler
         /// </summary>
         public static string TableMember = "Member";
         /// <summary>
-        /// 출퇴근시간테이블이름
+        /// 월급관리테이블이름
         /// </summary>
-        public static string TableSchedule = "Schedule";
+        public static string TableWage = "Wage";
         /// <summary>
         /// 셋팅관련테이블이름
         /// </summary>
         public static string TableAuthority = "Authority";
+        /// <summary>
+        /// 근무관리테이블 이름
+        /// </summary>
+        public static string TableSchedule = "Schedule";
         /// <summary>
         /// SQLite 파일 위치
         /// </summary>

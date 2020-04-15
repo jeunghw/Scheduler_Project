@@ -33,15 +33,17 @@ namespace Schcduler
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            InitComboBox();
+            InitYearComboBox();
+            InitMonthComboBox();
+            InitNameComboBox();
         }
 
         /// <summary>
-        /// 콤보박스 초기화
+        /// 년도 콤보박스 초기화
         /// </summary>
-        private void InitComboBox()
+        private void InitYearComboBox()
         {
-            //년도 콤보박스 초기화
+            
             List<ComboBoxItem> yearItems = new List<ComboBoxItem>();
 
             int years = Convert.ToInt32(DateTime.Now.ToString("yyyy"));
@@ -55,8 +57,12 @@ namespace Schcduler
 
             year.ItemsSource = yearItems;
             year.SelectedIndex = 5;
-
-            //달 콤보박스 초기화
+        }
+        /// <summary>
+        /// 달 콤보박스 초기화
+        /// </summary>
+        private void InitMonthComboBox()
+        {
             List<ComboBoxItem> monthItems = new List<ComboBoxItem>();
 
             for (int i = 1; i < 13; i++)
@@ -68,12 +74,33 @@ namespace Schcduler
 
             month.ItemsSource = monthItems;
             month.SelectedIndex = Convert.ToInt32(DateTime.Now.ToString("MM")) - 1;
+        }
 
+        /// <summary>
+        /// 이름콤보박스 초기화
+        /// </summary>
+        public void InitNameComboBox()
+        {
+            List<LoginData> loginDataList = CommData.GetCommData().getLoginDataList();
+
+            List<ComboBoxItem> NameItems = new List<ComboBoxItem>();
+
+            foreach (LoginData data in loginDataList)
+            {
+                ComboBoxItem item = new ComboBoxItem();
+                item.Content = data.Name;
+                NameItems.Add(item);
+            }
+
+            cbName.ItemsSource = NameItems;
+            //콤보박스 인덱스를 자기자신으로 설정
+            //현재 로그인된 사용자의 핸드폰번호로 loginDataList에서 검색해서 해당 객체를 가져온뒤 해당 객체가 몇번째 인덱스인지 검색
+            cbName.SelectedIndex = loginDataList.IndexOf(loginDataList.Find(x => x.Phone.Contains(MemberData.GetMemberData.Phone)));
         }
 
         private void btnExcel_Click(object sender, RoutedEventArgs e)
         {
-            wageMenger.ExportToExcel(DGSchedule, dataTable);
+            wageMenger.ExportToExcel(DGWage, dataTable);
 
         }
 
@@ -83,7 +110,7 @@ namespace Schcduler
             dataTable = new DataTable();
             dataTable = wageMenger.MappingDataTable(year.Text, month.Text);
 
-            DGSchedule.ItemsSource = dataTable.DefaultView;    //데이터 테이블 데이터 그리드 연동
+            DGWage.ItemsSource = dataTable.DefaultView;    //데이터 테이블 데이터 그리드 연동
 
             month_SelectionChanged(this, null);
             btnAddRow.IsEnabled = true;
@@ -140,21 +167,22 @@ namespace Schcduler
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            if(DGSchedule.SelectedIndex < 0)
+            if (DGWage.SelectedIndex < 0)
             {
-                DGSchedule.SelectedIndex = 0;
+                DGWage.SelectedIndex = 0;
             }
-            if (DGSchedule.SelectedIndex == (dataTable.Rows.Count - 1))
+            if (DGWage.SelectedIndex == (dataTable.Rows.Count - 1))
             {
                 return;
             }
             btnAddRow.IsEnabled = false;
 
-            wageMenger.DeleteDataTableRow(dataTable, DGSchedule.SelectedIndex);
+            wageMenger.DeleteDataTableRow(dataTable, DGWage.SelectedIndex);
 
             wageMenger.DeleteDataTable(dataTable);
 
             Save_Click(this,null);
         }
+
     }
 }

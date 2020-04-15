@@ -13,7 +13,9 @@ namespace Schcduler
         public static MainPage pgMain = new MainPage();
         public static MainWindow window;
         public static Frame frame;
-
+        public static WageManagement wageManagement = new WageManagement();
+        public static ScheduleManagement scheduleManagement = new ScheduleManagement();
+        public static MemberManagement join = new MemberManagement();
         public static void TransitionPages(int x)
         {
             if (x == 0)
@@ -36,15 +38,15 @@ namespace Schcduler
 
             if (x == 0)
             {
-                frame.Navigate(new WageManagement());
+                frame.Navigate(wageManagement);
             }
             else if (x == 1)
             {
-                frame.Navigate(new Join());
+                frame.Navigate(join);
             }
             else if (x == 2)
             {
-                
+                frame.Navigate(scheduleManagement);   
             }
         }
     }

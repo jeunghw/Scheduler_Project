@@ -21,11 +21,11 @@ namespace Schcduler
         MySQLManager mysqlManager = MainWindow.GetMySQLManager();
 
 
-        public ScheduleData Select(string tableName, string date)
+        public WageData Select(string tableName, string date)
         {
             SQLiteCommand command;
             SQLiteDataReader reader;
-            ScheduleData scheduleData = new ScheduleData();
+            WageData scheduleData = new WageData();
             string sql = "where Date=\""+date+"\"";
 
             string year = SplitString(date, '-')[0];
@@ -60,28 +60,28 @@ namespace Schcduler
         /// 스케줄 테이터 Update
         /// </summary>
         /// <param name="phone">입력할 테이블이름</param>
-        /// <param name="scheduleData">입력할 데이터 구조체</param>
+        /// <param name="wageData">입력할 데이터 구조체</param>
         /// <returns>영양받은 행수</returns>
-        public int Update(string phone, ScheduleData scheduleData)
+        public int Update(string phone, WageData wageData)
         {
             int result = -1;
-            string sql = "OnTime = \"" + scheduleData.OnTime + "\", OffTime = \"" + scheduleData.OffTime + "\", Time = \"" + scheduleData.Time + "\", RestTime = \"" + scheduleData.RestTime +
-                "\", ExtensionTime = \"" + scheduleData.ExtensionTime + "\", NightTime = \"" + scheduleData.NightTime + "\", TotalTime = \"" + scheduleData.TotalTime + "\", Wage = \""
-                + scheduleData.Wage + "\", RestWage = \"" + scheduleData.RestWage + "\", " + "ExtensionWage = \"" + scheduleData.ExtensionWage + "\", NightWage = \"" + scheduleData.NightWage +
-                "\", TotalWage = \"" + scheduleData.TotalWage + "\" where Date = \"" + scheduleData.Date + "\"";
+            string sql = "OnTime = \"" + wageData.OnTime + "\", OffTime = \"" + wageData.OffTime + "\", Time = \"" + wageData.Time + "\", RestTime = \"" + wageData.RestTime +
+                "\", ExtensionTime = \"" + wageData.ExtensionTime + "\", NightTime = \"" + wageData.NightTime + "\", TotalTime = \"" + wageData.TotalTime + "\", Wage = \""
+                + wageData.Wage + "\", RestWage = \"" + wageData.RestWage + "\", " + "ExtensionWage = \"" + wageData.ExtensionWage + "\", NightWage = \"" + wageData.NightWage +
+                "\", TotalWage = \"" + wageData.TotalWage + "\" where Date = \"" + wageData.Date + "\"";
 
-            string year = SplitString(scheduleData.Date, '-')[0];
+            string year = SplitString(wageData.Date, '-')[0];
 
             sqlliteManager.DBOpen();
             result = sqlliteManager.Update(phone + year, sql);
             sqlliteManager.DBClose();
 
-            sql = "OnTime = \"" + scheduleData.OnTime + "\", OffTime = \"" + scheduleData.OffTime + "\", Time = \"" + scheduleData.Time + "\", RestTime = \"" + scheduleData.RestTime +
-               "\", ExtensionTime = \"" + scheduleData.ExtensionTime + "\", NightTime = \"" + scheduleData.NightTime + "\", TotalTime = \"" + scheduleData.TotalTime + "\", Wage = \""
-               + scheduleData.Wage + "\", RestWage = \"" + scheduleData.RestWage + "\", " + "ExtensionWage = \"" + scheduleData.ExtensionWage + "\", NightWage = \"" + scheduleData.NightWage +
-               "\", TotalWage = \"" + scheduleData.TotalWage + "\" where Date = \"" + scheduleData.Date + "\" and Phone=\""+ phone +"\"";
+            sql = "OnTime = \"" + wageData.OnTime + "\", OffTime = \"" + wageData.OffTime + "\", Time = \"" + wageData.Time + "\", RestTime = \"" + wageData.RestTime +
+               "\", ExtensionTime = \"" + wageData.ExtensionTime + "\", NightTime = \"" + wageData.NightTime + "\", TotalTime = \"" + wageData.TotalTime + "\", Wage = \""
+               + wageData.Wage + "\", RestWage = \"" + wageData.RestWage + "\", " + "ExtensionWage = \"" + wageData.ExtensionWage + "\", NightWage = \"" + wageData.NightWage +
+               "\", TotalWage = \"" + wageData.TotalWage + "\" where Date = \"" + wageData.Date + "\" and Phone=\""+ phone +"\"";
 
-            Thread thread = new Thread(() => MainWindow.runThread(2,MySQLData.TableSchedule, sql));
+            Thread thread = new Thread(() => MainWindow.runThread(2,MySQLData.TableWage, sql));
             thread.Start();
 
             return result;
@@ -90,26 +90,26 @@ namespace Schcduler
         /// 스케줄 데이터 Insert
         /// </summary>
         /// <param name="phone">핸드폰번호</param>
-        /// <param name="scheduleData">입력할 데이터 구조체</param>
+        /// <param name="wageData">입력할 데이터 구조체</param>
         /// <returns>영양받은 행수</returns>
-        public int Insert(string phone, ScheduleData scheduleData)
+        public int Insert(string phone, WageData wageData)
         {
             int result = -1;
-            string sql = "values(\"" +scheduleData.Date+ "\", \"" + scheduleData.OnTime + "\", \"" + scheduleData.OffTime + "\", \"" + scheduleData.Time + "\", \"" + scheduleData.RestTime + "\", \""
-                + scheduleData.ExtensionTime + "\", \"" + scheduleData.NightTime + "\", \"" + scheduleData.TotalTime + "\", \"" + scheduleData.Wage + "\", \"" + scheduleData.RestWage +
-                "\", \"" + scheduleData.ExtensionWage + "\", \"" + scheduleData.NightWage + "\", \"" + scheduleData.TotalWage + "\")";
+            string sql = "values(\"" +wageData.Date+ "\", \"" + wageData.OnTime + "\", \"" + wageData.OffTime + "\", \"" + wageData.Time + "\", \"" + wageData.RestTime + "\", \""
+                + wageData.ExtensionTime + "\", \"" + wageData.NightTime + "\", \"" + wageData.TotalTime + "\", \"" + wageData.Wage + "\", \"" + wageData.RestWage +
+                "\", \"" + wageData.ExtensionWage + "\", \"" + wageData.NightWage + "\", \"" + wageData.TotalWage + "\")";
 
-            string year = SplitString(scheduleData.Date, '-')[0];
+            string year = SplitString(wageData.Date, '-')[0];
 
             sqlliteManager.DBOpen();
             sqlliteManager.Insert(phone+ year, sql);
             sqlliteManager.DBClose();
 
-            sql = "values(\"" + phone + "\", \"" + scheduleData.Date + "\", \"" + scheduleData.OnTime + "\", \"" + scheduleData.OffTime + "\", \"" + scheduleData.Time + "\", \"" + scheduleData.RestTime + "\", \""
-                + scheduleData.ExtensionTime + "\", \"" + scheduleData.NightTime + "\", \"" + scheduleData.TotalTime + "\", \"" + scheduleData.Wage + "\", \"" + scheduleData.RestWage +
-                "\", \"" + scheduleData.ExtensionWage + "\", \"" + scheduleData.NightWage + "\", \"" + scheduleData.TotalWage + "\")";
+            sql = "values(\"" + phone + "\", \"" + wageData.Date + "\", \"" + wageData.OnTime + "\", \"" + wageData.OffTime + "\", \"" + wageData.Time + "\", \"" + wageData.RestTime + "\", \""
+                + wageData.ExtensionTime + "\", \"" + wageData.NightTime + "\", \"" + wageData.TotalTime + "\", \"" + wageData.Wage + "\", \"" + wageData.RestWage +
+                "\", \"" + wageData.ExtensionWage + "\", \"" + wageData.NightWage + "\", \"" + wageData.TotalWage + "\")";
 
-            Thread thread = new Thread(() => MainWindow.runThread(4, MySQLData.TableSchedule, sql));
+            Thread thread = new Thread(() => MainWindow.runThread(4, MySQLData.TableWage, sql));
             thread.Start();
 
             return result;
@@ -119,22 +119,22 @@ namespace Schcduler
         /// 스케줄 데이터 Delete
         /// </summary>
         /// <param name="phone">핸드폰번호</param>
-        /// <param name="scheduleData">지울 데이터 구조체</param>
+        /// <param name="WageData">지울 데이터 구조체</param>
         /// <returns>영양받은 행수</returns>
-        public int Delete(string phone, ScheduleData scheduleData)
+        public int Delete(string phone, WageData WageData)
         {
             int result = -1;
-            string sql = "where Date=\"" + scheduleData.Date + "\"";
+            string sql = "where Date=\"" + WageData.Date + "\"";
 
-            string year = SplitString(scheduleData.Date, '-')[0];
+            string year = SplitString(WageData.Date, '-')[0];
 
             sqlliteManager.DBOpen();
             result = sqlliteManager.Delete(phone+year, sql);
             sqlliteManager.DBClose();
 
-            sql = "where Date=\"" + scheduleData.Date + "\" and Phone=\"" + phone + "\"";
+            sql = "where Date=\"" + WageData.Date + "\" and Phone=\"" + phone + "\"";
 
-            Thread thread = new Thread(() => MainWindow.runThread(3, MySQLData.TableSchedule, sql));
+            Thread thread = new Thread(() => MainWindow.runThread(3, MySQLData.TableWage, sql));
             thread.Start();
 
             return result;
@@ -156,7 +156,7 @@ namespace Schcduler
 
                 sql = "(Phone, Date, OnTime) values(\"" + loginData.Phone + "\",\"" + DateTime.Now.ToString("yyyy-MM-dd") + "\",\"" + DateTime.Now.ToString("HH:mm") + "\")";
 
-                Thread thread = new Thread(() => MainWindow.runThread(4, MySQLData.TableSchedule, sql));
+                Thread thread = new Thread(() => MainWindow.runThread(4, MySQLData.TableWage, sql));
                 thread.Start();
             }
 
@@ -199,7 +199,7 @@ namespace Schcduler
 
                 sql = "OffTime =\"" + time + "\" where Date=\"" + date + "\" and Phone=\""+loginData.Phone+"\"";
 
-                Thread thread = new Thread(() => MainWindow.runThread(2, MySQLData.TableSchedule, sql));
+                Thread thread = new Thread(() => MainWindow.runThread(2, MySQLData.TableWage, sql));
                 thread.Start();
             }
 
@@ -275,7 +275,7 @@ namespace Schcduler
 
         public void WageCalculation(string phone, string date)
         {
-            ScheduleData scheduleData = Select(phone, date);
+            WageData scheduleData = Select(phone, date);
             int Wage = SelectWage(phone);
 
             //출근,퇴근 시간, 분 분리
@@ -553,8 +553,8 @@ namespace Schcduler
             else
             {
                 //선택된 콤보박스의 인덱스를 가져와서 콤보박스에 연결된 List에서 핸드폰번호를 가져옴
-                int index = TransitionPage.pgMain.cbName.SelectedIndex;
-                phone = TransitionPage.pgMain.loginDataList[index].Phone;
+                int index = TransitionPage.wageManagement.cbName.SelectedIndex;
+                phone = CommData.GetCommData().getLoginDataList()[index].Phone;
                 
             }
 
@@ -714,12 +714,12 @@ namespace Schcduler
                     }
                     else
                     {
-                        int index = TransitionPage.pgMain.cbName.SelectedIndex;
-                        phone = TransitionPage.pgMain.loginDataList[index].Phone;
+                        int index = TransitionPage.wageManagement.cbName.SelectedIndex;
+                        phone = CommData.GetCommData().getLoginDataList()[index].Phone;
                     }
 
 
-                    ScheduleData scheduleData = new ScheduleData();
+                    WageData scheduleData = new WageData();
 
                     scheduleData.OnTime = data["OnTime"].ToString();
                     scheduleData.OffTime = data["OffTime"].ToString();
@@ -784,12 +784,12 @@ namespace Schcduler
                     }
                     else
                     {
-                        int index = TransitionPage.pgMain.cbName.SelectedIndex;
-                        phone = TransitionPage.pgMain.loginDataList[index].Phone;
+                        int index = TransitionPage.wageManagement.cbName.SelectedIndex;
+                        phone = CommData.GetCommData().getLoginDataList()[index].Phone;
                     }
 
 
-                    ScheduleData scheduleData = new ScheduleData();
+                    WageData scheduleData = new WageData();
 
                     scheduleData.OnTime = data["OnTime"].ToString();
                     scheduleData.OffTime = data["OffTime"].ToString();
@@ -855,12 +855,12 @@ namespace Schcduler
                     }
                     else
                     {
-                        int index = TransitionPage.pgMain.cbName.SelectedIndex;
-                        phone = TransitionPage.pgMain.loginDataList[index].Phone;
+                        int index = TransitionPage.wageManagement.cbName.SelectedIndex;
+                        phone = CommData.GetCommData().getLoginDataList()[index].Phone;
                     }
 
 
-                    ScheduleData scheduleData = new ScheduleData();
+                    WageData scheduleData = new WageData();
 
                     scheduleData.OnTime = OnTime;
                     scheduleData.OffTime = OffTime;
@@ -939,7 +939,7 @@ namespace Schcduler
                 }
                 else
                 {
-                    Name = TransitionPage.pgMain.cbName.Text;
+                    Name = TransitionPage.wageManagement.cbName.Text;
                 }
                 saveFile.FileName = Name;
                 workbook.SaveAs(saveDirectory + "\\" + saveFile.FileName);

@@ -23,14 +23,16 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <ComboBox Name="year" Width="80" Grid.Column="0"/>
-                <ComboBox Name="month" Width="50" Grid.Column="1" SelectionChanged="month_SelectionChanged"/>
-                <Button x:Name="Search" Width="40" Content="검색" Grid.Column="2" Click="Search_Click"/>
-                <ComboBox Name="cbDay" Width="50" Grid.Column="3" IsEnabled="False"/>
-                <Button x:Name="btnAddRow" Width="60" Content="행추가" Grid.Column="4" Click="btnAddRow_Click" IsEnabled="False"/>
-                <Button x:Name="Save" Width="40" Content="저장" Grid.Column="5" Click="Save_Click"/>
-                <Button x:Name="btnDelete" Width="40" Content="삭제" Grid.Column="6" Click="btnDelete_Click"/>
+                <ComboBox Name="cbName" Width="80" Grid.Column="0"/>
+                <ComboBox Name="year" Width="80" Grid.Column="1"/>
+                <ComboBox Name="month" Width="50" Grid.Column="2" SelectionChanged="month_SelectionChanged"/>
+                <Button x:Name="Search" Width="40" Content="검색" Grid.Column="3" Click="Search_Click"/>
+                <ComboBox Name="cbDay" Width="50" Grid.Column="4" IsEnabled="False"/>
+                <Button x:Name="btnAddRow" Width="60" Content="행추가" Grid.Column="5" Click="btnAddRow_Click" IsEnabled="False"/>
+                <Button x:Name="Save" Width="40" Content="저장" Grid.Column="6" Click="Save_Click"/>
+                <Button x:Name="btnDelete" Width="40" Content="삭제" Grid.Column="7" Click="btnDelete_Click"/>
             </Grid>
             <Grid HorizontalAlignment="Right">
                 <Grid.ColumnDefinitions>
@@ -40,23 +42,23 @@
                 <Button x:Name="btnExcel" Content="엑셀변환" Click="btnExcel_Click" Grid.Column="1"/>
             </Grid>
         </Grid>
-        <DataGrid Name="DGSchedule" ItemsSource="{Binding}" Grid.Row="1" FontSize="15" AutoGenerateColumns="False" 
+        <DataGrid Name="DGWage" ItemsSource="{Binding}" Grid.Row="1" FontSize="15" AutoGenerateColumns="False" 
                   AreRowDetailsFrozen="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   CanUserSortColumns="False" ClipToBounds="True" CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="날짜" Binding="{Binding Path=Date}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="출근시간" Binding="{Binding Path=OnTime}" IsReadOnly="False"/>
-                <DataGridTextColumn Header="퇴근시간" Binding="{Binding Path=OffTime}" IsReadOnly="False"/>
-                <DataGridTextColumn Header="일반시간" Binding="{Binding Path=Time}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="휴계시간" Binding="{Binding Path=RestTime}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="연장시간" Binding="{Binding Path=ExtensionTime}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="야간시간" Binding="{Binding Path=NightTime}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="총시간" Binding="{Binding Path=TotalTime}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="일반시급" Binding="{Binding Path=Wage}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="휴계시급" Binding="{Binding Path=RestWage}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="연장시급" Binding="{Binding Path=ExtensionWage}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="야간시급" Binding="{Binding Path=NightWage}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="총시급" Binding="{Binding Path=TotalWage}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="날짜" Binding="{Binding Path=Date}" Width="4*" MinWidth="90" IsReadOnly="True"/>
+                <DataGridTextColumn Header="출근시간" Binding="{Binding Path=OnTime}" Width="4*" MinWidth="45" IsReadOnly="False"/>
+                <DataGridTextColumn Header="퇴근시간" Binding="{Binding Path=OffTime}" Width="4*" MinWidth="45" IsReadOnly="False"/>
+                <DataGridTextColumn Header="일반시간" Binding="{Binding Path=Time}" Width="4*" MinWidth="45" IsReadOnly="True"/>
+                <DataGridTextColumn Header="휴계시간" Binding="{Binding Path=RestTime}" Width="4*" MinWidth="45" IsReadOnly="True"/>
+                <DataGridTextColumn Header="연장시간" Binding="{Binding Path=ExtensionTime}" Width="4*" MinWidth="45" IsReadOnly="True"/>
+                <DataGridTextColumn Header="야간시간" Binding="{Binding Path=NightTime}" Width="4*" MinWidth="45" IsReadOnly="True"/>
+                <DataGridTextColumn Header="총시간" Binding="{Binding Path=TotalTime}" Width="4*" MinWidth="45" IsReadOnly="True"/>
+                <DataGridTextColumn Header="일반시급" Binding="{Binding Path=Wage}" Width="5*" MinWidth="60" IsReadOnly="True"/>
+                <DataGridTextColumn Header="휴계시급" Binding="{Binding Path=RestWage}" Width="5*" MinWidth="60" IsReadOnly="True"/>
+                <DataGridTextColumn Header="연장시급" Binding="{Binding Path=ExtensionWage}" Width="5*" MinWidth="60" IsReadOnly="True"/>
+                <DataGridTextColumn Header="야간시급" Binding="{Binding Path=NightWage}" Width="5*" MinWidth="60" IsReadOnly="True"/>
+                <DataGridTextColumn Header="총시급" Binding="{Binding Path=TotalWage}" Width="5*" MinWidth="60" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
 
