@@ -13,7 +13,7 @@ import java.net.HttpURLConnection
 
 class PHPManager {
 
-    val serverIP = "http://3.21.102.163/"
+    val serverIP = "http://15.164.228.119/"
 
     fun SelectMemberData(scriptName : String, writeData : String) : JSONArray {
 
@@ -46,7 +46,7 @@ class PHPManager {
         return result
     }
 
-    fun SelectScheduleData(scriptName : String, writeData : String) : JSONArray {
+    fun SelectWageData(scriptName : String, writeData : String) : JSONArray {
 
         val url = URL(serverIP+scriptName+".php")
         var result = JSONArray()
@@ -65,7 +65,7 @@ class PHPManager {
             }
 
             var jsonArray = InputStreamReader(conn.getInputStream()).let {
-                JSONObject(it.readText()).getJSONArray("Schedule");
+                JSONObject(it.readText()).getJSONArray("Wage");
             }
 
             result = jsonArray

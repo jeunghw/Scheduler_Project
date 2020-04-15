@@ -6,4 +6,5 @@ class LoginData {
     var name=""
     var wage=""
     var authority= -1
+    var task = -1;
 }

@@ -1,24 +1,21 @@
 package com.hw.android.schdeuler
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_rceyclerview.view.*
 
 //리스트를 받아서 레거시뷰에 연결
-class ScheduleRvAdapter(private val scheduleList : ArrayList<ScheduleData>) : RecyclerView.Adapter<ScheduleRvAdapter.ScheduleViewHolder>() {
+class WageRvAdapter(private val wageList : ArrayList<WageData>) : RecyclerView.Adapter<WageRvAdapter.ScheduleViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ScheduleViewHolder(parent)
 
     //아이템 길이
-    override fun getItemCount() = scheduleList.size
+    override fun getItemCount() = wageList.size
 
     override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
-        scheduleList[position].let { item ->
+        wageList[position].let { item ->
             with (holder) {
                 var swap = item.date.split("-")
                 if(swap.size < 2) {

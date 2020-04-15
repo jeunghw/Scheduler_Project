@@ -22,13 +22,12 @@ class MemberManager {
                 jsonArray.await()
 
                 //완료된 코루틴내부의 json형식의 데이터를 logindata에 넣은뒤 반환
-                var loginData = LoginData()?.let {
+                var loginData = LoginData().let {
                     it.phone = jsonArray.getCompleted().getJSONObject(0).getString("Phone")
                     it.password = jsonArray.getCompleted().getJSONObject(0).getString("Password")
                     it.name = jsonArray.getCompleted().getJSONObject(0).getString("Name")
                     it.wage = jsonArray.getCompleted().getJSONObject(0).getString("Wage")
-                    it.authority =
-                        jsonArray.getCompleted().getJSONObject(0).getString("Authority").toInt()
+                    it.authority = jsonArray.getCompleted().getJSONObject(0).getString("Authority").toInt()
 
                     it
                 }
@@ -64,6 +63,7 @@ class MemberManager {
                         var loginData = LoginData()
                         loginData.phone = it.getJSONObject(i).getString("Phone")
                         loginData.name = it.getJSONObject(i).getString("Name")
+                        loginData.task = it.getJSONObject(i).getInt("task")
                         namesList.add(loginData)
                     }
 

@@ -1,6 +1,6 @@
 package com.hw.android.schdeuler
 
-class ScheduleData {
+class WageData {
     var date=""
     var onTime=""
     var offTime=""
