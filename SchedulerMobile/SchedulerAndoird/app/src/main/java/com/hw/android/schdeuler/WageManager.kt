@@ -7,7 +7,7 @@ import kotlinx.coroutines.runBlocking
 
 class WageManager {
 
-    fun selectWageData(phone : String, date : String) : MutableList<WageData> {
+    fun selectWageData(phone : String, date : String) : ArrayList<WageData> {
         val scope = CoroutineScope(Dispatchers.Default)
         var result = arrayListOf<WageData>()
 
@@ -23,7 +23,7 @@ class WageManager {
                 jsonArray.await()
 
                 //완료된 코루틴내부의 json형식의 데이터를 logindata에 넣은뒤 반환
-                var wageData = jsonArray.getCompleted().let {
+                var wageDataList = jsonArray.getCompleted().let {
                     var wageList = arrayListOf<WageData>()
                     var sum = 0
                     for(i in 0..it.length()-1) {
@@ -55,7 +55,7 @@ class WageManager {
 
                     wageList
                 }
-                result = wageData
+                result = wageDataList
             }
         }
         catch (e : Exception)

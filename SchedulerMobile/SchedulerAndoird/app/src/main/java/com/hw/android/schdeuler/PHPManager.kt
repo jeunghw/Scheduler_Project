@@ -1,5 +1,6 @@
 package com.hw.android.schdeuler
 
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.MainThread
 import org.json.JSONArray
@@ -34,14 +35,14 @@ class PHPManager {
             }
 
             var jsonArray = InputStreamReader(conn.getInputStream()).let {
-                JSONObject(it.readText()).getJSONArray("Member");
+                JSONObject(it.readText()).getJSONArray("Member")
             }
 
             result = jsonArray
         }
         catch (e : Exception) {
-            System.out.println("예외  : " + e);
-            System.out.println(writeData);
+            System.out.println("예외  : " + e)
+            System.out.println(writeData)
         }
         return result
     }
@@ -65,14 +66,46 @@ class PHPManager {
             }
 
             var jsonArray = InputStreamReader(conn.getInputStream()).let {
-                JSONObject(it.readText()).getJSONArray("Wage");
+
+                JSONObject(it.readText()).getJSONArray("Wage")
             }
 
             result = jsonArray
         }
         catch (e : Exception) {
-            System.out.println("예외  : " + e);
-            System.out.println(writeData);
+            System.out.println("예외  : " + e)
+            System.out.println(writeData)
+        }
+        return result
+    }
+
+    fun SelectScheduleData(scriptName : String, writeData : String) : JSONArray {
+
+        val url = URL(serverIP+scriptName+".php")
+        var result = JSONArray()
+
+        try {
+            val conn = (url.openConnection() as HttpURLConnection).also {
+                it.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+                it.requestMethod="POST"
+                it.connect()
+            }
+
+            OutputStreamWriter(conn.getOutputStream()).also {
+                it.write(writeData);
+                it.flush()
+                it.close()
+            }
+
+            var jsonArray = InputStreamReader(conn.getInputStream()).let {
+                JSONObject(it.readText()).getJSONArray("Schedule")
+            }
+
+            result = jsonArray
+        }
+        catch (e : Exception) {
+            System.out.println("예외  : " + e)
+            System.out.println(writeData)
         }
         return result
     }

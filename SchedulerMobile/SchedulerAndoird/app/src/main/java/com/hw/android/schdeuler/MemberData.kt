@@ -7,6 +7,7 @@ object MemberData {
     var name = ""
     var wage=""
     var authorityData = AuthorityData()
+    var task = -1;
 
     fun setMemberData(loginData: LoginData){
         phone = loginData.phone
@@ -14,5 +15,6 @@ object MemberData {
         name = loginData.name
         wage = loginData.wage
         authorityData.authority = loginData.authority
+        task = loginData.task;
     }
 }

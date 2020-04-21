@@ -22,10 +22,14 @@ namespace Schcduler
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            inItDGSchedule(); 
+            if(MemberData.GetMemberData.AuthorityData.Authority == 3)
+            {
+                Save.IsEnabled = false;
+            }    
             inItcbYear();
             inItcbMonth();
             inItcbTask();
+            inItDGSchedule();
         }
 
         private void inItDGSchedule()
@@ -78,7 +82,7 @@ namespace Schcduler
                     DGSchedule.Columns.Add(column3);
 
                 }
-                dataTable = scheduleManager.inItDataTable(dateWeekList, "",-1);
+                dataTable = scheduleManager.inItDataTable(dateWeekList, "",cbTask.SelectedIndex);
                 DGSchedule.ItemsSource = dataTable.DefaultView;
             }
         }
@@ -209,7 +213,7 @@ namespace Schcduler
             taskItems.Add(item2);
 
             cbTask.ItemsSource = taskItems;
-            cbTask.SelectedIndex = 0; 
+            cbTask.SelectedIndex = MemberData.GetMemberData.Task;
         }
 
         /// <summary>

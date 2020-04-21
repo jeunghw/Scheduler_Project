@@ -1,20 +1,19 @@
 package com.hw.android.schdeuler
 
 import android.view.LayoutInflater
-
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_rceyclerview.view.*
+import kotlinx.android.synthetic.main.item_wage_rceyclerview.view.*
 
 //리스트를 받아서 레거시뷰에 연결
-class WageRvAdapter(private val wageList : ArrayList<WageData>) : RecyclerView.Adapter<WageRvAdapter.ScheduleViewHolder>() {
+class WageRvAdapter(private val wageList : ArrayList<WageData>) : RecyclerView.Adapter<WageRvAdapter.WageViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ScheduleViewHolder(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = WageViewHolder(parent)
 
     //아이템 길이
     override fun getItemCount() = wageList.size
 
-    override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: WageViewHolder, position: Int) {
         wageList[position].let { item ->
             with (holder) {
                 var swap = item.date.split("-")
@@ -41,8 +40,8 @@ class WageRvAdapter(private val wageList : ArrayList<WageData>) : RecyclerView.A
     }
     
     //변수를 생성해서 아이템 뷰의 아이템과 매칭
-    inner class ScheduleViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.item_rceyclerview, parent, false)) {
+    inner class WageViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
+        LayoutInflater.from(parent.context).inflate(R.layout.item_wage_rceyclerview, parent, false)) {
         val Day = itemView.tbDay
         val OnTime = itemView.tbOnTime
         val OffTime = itemView.tbOffTime

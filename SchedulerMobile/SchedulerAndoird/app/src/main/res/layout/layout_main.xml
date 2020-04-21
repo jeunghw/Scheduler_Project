@@ -17,7 +17,7 @@
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="70dp"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:layout_gravity="left"
             android:textSize="9dp"
             android:text="로그아웃"/>

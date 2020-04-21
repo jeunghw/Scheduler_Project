@@ -28,6 +28,7 @@ class MemberManager {
                     it.name = jsonArray.getCompleted().getJSONObject(0).getString("Name")
                     it.wage = jsonArray.getCompleted().getJSONObject(0).getString("Wage")
                     it.authority = jsonArray.getCompleted().getJSONObject(0).getString("Authority").toInt()
+                    it.task = jsonArray.getCompleted().getJSONObject(0).getString("Task").toInt()
 
                     it
                 }
@@ -41,9 +42,10 @@ class MemberManager {
         return result
     }
 
-    fun selectNameData() : MutableList<LoginData> {
+    //이름, 핸드폰번호, 직무를 가져와서 리스트로 반환
+    fun selectNameData() : ArrayList<LoginData> {
         val scope = CoroutineScope(Dispatchers.Default)
-        var result = mutableListOf<LoginData>()
+        var result = ArrayList<LoginData>()
 
         //코루틴을 사용해서 PHPManager을 실행, 결과값을 받음
         var jsonArray = scope.async {
@@ -58,17 +60,18 @@ class MemberManager {
 
                 //완료된 코루틴내부의 json형식의 데이터를 logindata에 넣은뒤 반환
                 var loginData = jsonArray.getCompleted().let {
-                    var namesList = mutableListOf<LoginData>()
+                    var namesList = ArrayList<LoginData>()
                     for(i in 0..it.length()-1) {
                         var loginData = LoginData()
                         loginData.phone = it.getJSONObject(i).getString("Phone")
                         loginData.name = it.getJSONObject(i).getString("Name")
-                        loginData.task = it.getJSONObject(i).getInt("task")
+                        loginData.task = it.getJSONObject(i).getInt("Task")
                         namesList.add(loginData)
                     }
 
                     namesList
                 }
+
                 result = loginData
             }
         }

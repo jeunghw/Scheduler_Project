@@ -131,7 +131,7 @@ namespace Schcduler
             sql = "values(2,0,1,0,0,0)";
             Insert(SQLiteData.TableAuthority, sql);
 
-            sql = "values(3,1,1,0,0,0)";
+            sql = "values(3,1,1,1,0,0)";
             Insert(SQLiteData.TableAuthority, sql);
         }
         /// <summary>

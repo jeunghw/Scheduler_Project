@@ -5,7 +5,7 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_wage.*
+import kotlinx.android.synthetic.main.layout_wage.*
 import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
@@ -16,7 +16,7 @@ class WageActivity : AppCompatActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_wage)
+        setContentView(R.layout.layout_wage)
 
         inItSpinner()
 
@@ -34,7 +34,7 @@ class WageActivity : AppCompatActivity() {
 
             //레거시뷰를 생성해서 데이터를 연결
             try {
-                findViewById<RecyclerView>(R.id.rlschedule).apply {
+               rlsWage.apply {
                     setHasFixedSize(true)
 
                     layoutManager = LinearLayoutManager(this@WageActivity)
@@ -74,7 +74,6 @@ class WageActivity : AppCompatActivity() {
         {
             namesList.add(MemberData.name)
         }
-
         spName.adapter = ArrayAdapter(this, R.layout.item_spinner, namesList)
         spName.setSelection(0)
         //년도스패너 초기화

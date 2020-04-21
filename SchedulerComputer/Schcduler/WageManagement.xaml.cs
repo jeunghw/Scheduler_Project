@@ -33,6 +33,14 @@ namespace Schcduler
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            if(MemberData.GetMemberData.AuthorityData.Authority == 3)
+            {
+                btnAddRow.IsEnabled = false;
+                btnDelete.IsEnabled = false;
+                Save.IsEnabled = false;
+                cbName.IsEnabled = false;
+                cbDay.IsEnabled = false;
+            }
             InitYearComboBox();
             InitMonthComboBox();
             InitNameComboBox();
@@ -101,7 +109,6 @@ namespace Schcduler
         private void btnExcel_Click(object sender, RoutedEventArgs e)
         {
             wageMenger.ExportToExcel(DGWage, dataTable);
-
         }
 
         private void Search_Click(object sender, RoutedEventArgs e)

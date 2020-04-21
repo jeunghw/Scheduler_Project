@@ -16,7 +16,7 @@
                 android:id="@+id/btnSchedule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="근무관리"/>
+                android:text="근무관리" />
             <Button
                 android:id="@+id/btnWage"
                 android:layout_width="wrap_content"

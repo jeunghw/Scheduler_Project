@@ -20,6 +20,7 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".WageActivity" />
+        <activity android:name=".ScheduleActivity" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>

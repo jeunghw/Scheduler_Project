@@ -19,25 +19,26 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="50dp"
+                android:gravity="center"
                 android:text="이름" />
             <Spinner
                 android:id="@+id/spName"
                 android:layout_width="80dp"
-                android:layout_height="30dp"
+                android:layout_height="50dp"
                 android:spinnerMode="dialog"
                 android:background="@drawable/spinner_background"/>
 
             <Spinner
                 android:id="@+id/spYear"
                 android:layout_width="60dp"
-                android:layout_height="30dp"
+                android:layout_height="50dp"
                 android:spinnerMode="dialog"
                 android:background="@drawable/spinner_background"/>
             <Spinner
                 android:id="@+id/spMonth"
                 android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_height="50dp"
                 android:spinnerMode="dialog"
                 android:background="@drawable/spinner_background"
                 />
@@ -45,7 +46,7 @@
             <Button
                 android:id="@+id/btnSearch"
                 android:layout_width="50dp"
-                android:layout_height="30dp"
+                android:layout_height="50dp"
                 android:text="검색"
                 android:textSize="9dp" />
 
@@ -155,7 +156,7 @@
                 </LinearLayout>
 
                 <view class="androidx.recyclerview.widget.RecyclerView"
-                    android:id="@+id/rlschedule"
+                    android:id="@+id/rlsWage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 

@@ -52,7 +52,7 @@ namespace Schcduler
 
             sqliteManager.DBOpen();
 
-            command = sqliteManager.Select(SQLiteData.TableMember, "order by Name");
+            command = sqliteManager.Select(SQLiteData.TableMember, "order by Authority, Name");
             reader = command.ExecuteReader();
 
             while (reader.Read())
