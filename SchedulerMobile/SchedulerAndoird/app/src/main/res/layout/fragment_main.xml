@@ -1,49 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainFragment">
+    android:gravity="center">
 
     <LinearLayout
-        android:id="@+id/fragmentLL"
-        android:layout_width="match_parent"
-        android:layout_height="687dp"
-        android:orientation="vertical"
-        android:gravity="center">
-
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnWage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="월급화면"/>
             <Button
                 android:id="@+id/btnSchedule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="근태화면"/>
-
+                android:text="근무관리"/>
+            <Button
+                android:id="@+id/btnWage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="근태관리"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:orientation="horizontal">
-
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-
         </LinearLayout>
     </LinearLayout>
 
 
-</FrameLayout>
+
+</LinearLayout>

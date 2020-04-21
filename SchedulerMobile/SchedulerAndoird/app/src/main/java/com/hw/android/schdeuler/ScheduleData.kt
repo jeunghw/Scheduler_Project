@@ -1,4 +1,4 @@
 package com.hw.android.schdeuler
 
-class MainFragment {
+class ScheduleData {
 }
